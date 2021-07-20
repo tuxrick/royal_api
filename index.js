@@ -21,6 +21,14 @@ app.use('/api/v1/users', users(router));
 let gamers = require('./v1/routes/gamers.js');
 app.use('/api/v1/gamers', gamers(router));
 
+let scores = require('./v1/routes/scores.js');
+app.use('/api/v1/scores', scores(router));
+
+/*
+let prizes = require('./v1/routes/prizes.js');
+app.use('/api/v1/prizes', prizes(router));
+*/
+
 //app.use(express.static('./media'));
 
 app.listen(3000, () => {
