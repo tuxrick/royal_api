@@ -24,6 +24,9 @@ app.use('/api/v1/gamers', gamers(router));
 let scores = require('./v1/routes/scores.js');
 app.use('/api/v1/scores', scores(router));
 
+let time_played = require('./v1/routes/time_played.js');
+app.use('/api/v1/time_played', time_played(router));
+
 /*
 let prizes = require('./v1/routes/prizes.js');
 app.use('/api/v1/prizes', prizes(router));
