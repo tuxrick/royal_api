@@ -1,18 +1,14 @@
 //Libraries
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
-var base64url = require('base64url'); 
-var Sequelize = require('sequelize');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const base64url = require('base64url'); 
+const Sequelize = require('sequelize');
 
 const http = require('http');
-
 const db = require('../../database/db.js');
-process.env.SECRET_KEY = 'Roy@1';
-
-
 
 //Models
-var User = require('../../v1/models/users');
+const User = require('../../v1/models/users');
 
 
 module.exports = {
@@ -64,6 +60,11 @@ module.exports = {
 	                status: "error" 
 	            });
 	        }
+	    }).catch(err => {
+	        res.status(401).json({ 
+		        data: err,
+		        status: "error"
+		    })
 	    });
 	
 	},
@@ -127,6 +128,7 @@ module.exports = {
 
 	list_users: (req, res) => {
 	    
+		//user decoded information
 	    const user_info = req.decoded;
 	    
 	    if (user_info && user_info.id_role == 1) {
@@ -240,8 +242,7 @@ module.exports = {
 	                status: "success"
 	            });		    
 	            
-		    })
-		    .catch(function (err) {
+		    }).catch(function (err) {
 	            res.status(401).json({ 
 	                data: err,
 	                message:"Error updating user",

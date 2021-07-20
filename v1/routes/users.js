@@ -1,23 +1,23 @@
-const controller = require('../../v1/controllers/users');
+const user_controller = require('../../v1/controllers/users');
 const validateToken = require('../../v1/utils').validateToken;
 
 
 module.exports = (router) => {
 
 	router.route('/add')
-		.post(controller.add);
+		.post(user_controller.add);
 
 	router.route('/login')
-	    .post(controller.login);
+	    .post(user_controller.login);
 
 	router.route('/list')
-		.get(validateToken, controller.list_users); 	    
+		.get(validateToken, user_controller.list_users); 	    
 
 	router.route('/info/:id')
-		.get(validateToken, controller.info);	
+		.get(validateToken, user_controller.info);	
 
 	router.route('/update/:id')
-		.post(validateToken, controller.update);
+		.post(validateToken, user_controller.update);
 
 	return router;    
 }; 

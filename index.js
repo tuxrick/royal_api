@@ -2,6 +2,7 @@
 
 const express = require('express'); 
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 var cors = require('cors');
 
@@ -14,10 +15,11 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-
-const users = require('./v1/routes/users.js');
-
+let users = require('./v1/routes/users.js');
 app.use('/api/v1/users', users(router));
+
+let gamers = require('./v1/routes/gamers.js');
+app.use('/api/v1/gamers', gamers(router));
 
 //app.use(express.static('./media'));
 
