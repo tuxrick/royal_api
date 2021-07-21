@@ -381,7 +381,7 @@ module.exports = {
     return response.data;
   },        
   //Registro de premios por avance en el mapa.
-  surveycatalog: async function(id_owner, contractId, ReasonId) {  
+  registerprizes: async function(id_owner, contractId, ReasonId) {  
 
     /*
       OwnerId	Número de socio al que se le asigna el premio
@@ -448,7 +448,7 @@ module.exports = {
     return response.data;
   },
   //Indica si la encuesta ha sido respondida en su totalidad
-  questionsandanswers: async function(ownerId,surveyId){  
+  issurveyanswered: async function(ownerId,surveyId){  
     /*
       ownerId: Identificador del socio
       surveyId: Clave del survey a validar

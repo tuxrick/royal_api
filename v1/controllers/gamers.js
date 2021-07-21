@@ -425,6 +425,70 @@ module.exports = {
             });            
         }
 
+    },
+
+    //Save user survey
+    save_survey: async (req, res) => {
+        
+        let id_owner = req.params.owner_id;
+        //Survey answers received by the user
+        let { age, web_user, travel_with, best_time_to_contact } = req.body;
+
+        //preparing the answers to the final request 
+        let answers = {
+            OwnerID: id_owner,
+            SurveyId: 4,//To validate
+            AnswerValues:[
+                {
+                    SurveyQuestionId:21,
+                    AnswerValue: age
+                },
+                /*
+                {
+                    SurveyQuestionId:25,
+                    AnswerValue: web_user
+                },
+                {
+                    SurveyQuestionId:23,
+                    AnswerValue: travel_with
+                },
+                */
+                {
+                    SurveyQuestionId:23,
+                    AnswerValue: best_time_to_contact
+                },                        
+            ]
+        }
+
+        //http request to answer the survey (savesurveyanswers)
+        
+        //updating, user answered survey on local game db 
+        Gamer.update(
+            {
+                answered_survey:true
+            },
+            {
+                where:{
+                    id_owner: id_owner
+                }
+            }
+        ).then(response => {
+
+            return res.status(200).send({
+                data: response,
+                message:"Survey correctly answered",
+                status: "success"
+            });    
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                status: "error"
+            })
+        })
+
+
+
     }
 
 }

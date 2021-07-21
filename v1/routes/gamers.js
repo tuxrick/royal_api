@@ -19,5 +19,8 @@ module.exports = (router) => {
 	router.route('/update_gamer/:owner_id')
 		.post(gamer_controller.update_gamer);
 
+	router.route('/save_survey/:owner_id')
+		.post(gamer_controller.save_survey);
+
 	return router;    
 };  
