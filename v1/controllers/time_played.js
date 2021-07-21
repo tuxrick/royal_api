@@ -1,6 +1,5 @@
 
 //Models
-const time_played = require('../../v1/models/time_played');
 const Time = require('../../v1/models/time_played');
 
 
@@ -60,7 +59,7 @@ module.exports = {
 		                
             return res.status(401).send({
                 error: err,
-                message:"Error saving time",
+                message:"Error getting time",
                 status: "error"
             });
         })
@@ -85,7 +84,7 @@ module.exports = {
 		                
             return res.status(401).send({
                 error: err,
-                message:"Time saving score",
+                message:"Error getting time",
                 status: "error"
             });
         })

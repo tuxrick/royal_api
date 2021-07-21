@@ -61,7 +61,7 @@ module.exports = {
 		                
             return res.status(401).send({
                 error: err,
-                message:"Error saving score",
+                message:"Error getting score",
                 status: "error"
             });
         })
@@ -86,7 +86,7 @@ module.exports = {
 		                
             return res.status(401).send({
                 error: err,
-                message:"Error saving score",
+                message:"Error getting score",
                 status: "error"
             });
         })
