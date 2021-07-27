@@ -106,6 +106,9 @@ module.exports = {
                         //Enviar código de plantilla de correo con id de plantilla
                         //send_code (id_owner, code, ...)
 
+                        created_gamer.code = code.code;
+                        created_gamer.expiration_time = code.expiration_time;
+
                         //Enviar respuesta y código
 	                    return res.status(200).send({
                             data: {
@@ -140,7 +143,10 @@ module.exports = {
                         //Generate the code
                         //Update the gamer and send the code and expiration time
                         let code = await generateCodeAndUpdate(id_owner);
-                        
+
+                        gamer_data.code = code.code;
+                        gamer_data.expiration_time = code.expiration_time;                        
+
                         return res.status(200).send({
                             data: {
                                 code: code.code,
@@ -218,7 +224,7 @@ module.exports = {
                 }else{
                     res.status(401).json({ 
                         data: "",
-                        message: "Wrong or expirated code",
+                        message: "Wrong or expired code",
                         status: "error"
                     })
                 }

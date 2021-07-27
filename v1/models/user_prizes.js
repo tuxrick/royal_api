@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const db = require('../../database/db.js')
 
 module.exports = db.sequelize.define(
-  'prizes',
+  'user_prizes',
   {
     id: {
       type: Sequelize.INTEGER,
@@ -10,25 +10,21 @@ module.exports = db.sequelize.define(
       unique: true,    
       autoIncrement: true
     },
-    reasonId: {
+    id_gamer: {
     	type: Sequelize.INTEGER,
         allowNull: false
     },    
-    reasonDescription: {
-    	type: Sequelize.STRING,
+    id_prize: {
+    	type: Sequelize.INTEGER,
         allowNull: false
     },
-    active: {
-    	type: Sequelize.BOOLEAN,
-        allowNull: false
-    },    
-    description: {
-    	type: Sequelize.STRING,
+    date: {
+    	type: Sequelize.DATE,
         allowNull: false
     }
   },
   {
     timestamps: false,
-    tableName: 'prizes'
+    tableName: 'user_prizes'
   }
 )

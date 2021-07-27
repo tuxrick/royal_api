@@ -23,7 +23,7 @@ module.exports = db.sequelize.define(
         allowNull: false
     },    
     level: {
-    	type: Sequelize.INTEGER,
+    	type: Sequelize.STRING,
         allowNull: false
     },
     date: {
