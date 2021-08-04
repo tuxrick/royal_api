@@ -27,6 +27,391 @@ module.exports = {
     return axios_call; 
   },
   
+  //Welcome kit user info 
+  WKGralInfo: async function(id_owner) {  
+
+
+    let token = await this.login_royal();
+    console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/' + id_owner ,{
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting WKGralInfo endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+    /*
+    let response = {
+      data:{
+        "ownerId": 12345,
+        "contracts": [
+            {
+                "contractId": 101217,
+                "siteId": 5,
+                "ownerID": 12345,
+                "contractNumber": "5-100726",
+                "contractDate": "2002-08-28T00:00:00",
+                "deededStatus": "Upgrade",
+                "siteName": "D-SR MX  Insurgentes",
+                "contractStatus": "Current Owner",
+                "points": 15000.00,
+                "pkgType": "SLVR",
+                "currencyName": "Mexican Pesos",
+                "codeCompaniaContable": 1613,
+                "companiaContable": "Gpo CMX S",
+                "incentives": []
+            }
+        ],
+        "ownerDetail": {
+            "ownerID": 12345,
+            "prospectID": 12345,
+            "siteID": 30,
+            "ownerNumber": "12345",
+            "ownerTypeID": 3,
+            "ownerType": "Swiss Member",
+            "ownerStatusID": 377,
+            "ownerStatus": "Active",
+            "salutation": "",
+            "company": "",
+            "lastName": "Cesin Farah",
+            "firstName": "Javier",
+            "streetAddress": "VIALIDAD OTRO ALGUNA CALLE NUM 150 150 ASENTAMIENTO OTRO COLONIA OTRO",
+            "city": "Ciudad de México",
+            "county": "DELEGACIÓN MUNICIPIO",
+            "state": "CMX",
+            "postalCode": "03500",
+            "countryID": 52,
+            "country": "Mexico",
+            "phone1": null,
+            "phone2": null,
+            "fax": null,
+            "email": null,
+            "ssn": "12345",
+            "exchangeNumber": "2684-20822",
+            "passportNum": "",
+            "driverLicense": "",
+            "birthdate": "1978-09-09T00:00:00",
+            "maritalStatusID": 265,
+            "maritalStatus": "Married",
+            "spouseName": "LOCM801216",
+            "occupationID": 366,
+            "occupation": "Unknown",
+            "householdIncome": 0,
+            "preferredLanguageID": 249,
+            "preferredLanguage": "Spanish",
+            "creditCardTypeID": null,
+            "creditCardType": null,
+            "creditCardNumber": null,
+            "creditCardExpiration": null,
+            "password": "",
+            "referralCreditBal": 0.00,
+            "steward": "",
+            "dateLocked": null,
+            "user1": "",
+            "user2": "",
+            "user3": "",
+            "user4": "",
+            "user5": "",
+            "user6": "PIF Azul L",
+            "user7": "royal123            ",
+            "user8": "",
+            "user9": "",
+            "user10": "",
+            "user11": 0,
+            "user12": 0,
+            "user13": null,
+            "user14": 0.00,
+            "user15": 1,
+            "useACH": null,
+            "accountName": null,
+            "routingNumber": null,
+            "accountNumber": null,
+            "ownerSubTypeID": 8,
+            "ownerSubType": "Silver",
+            "ccLastFour": null,
+            "driverLicenseST": "",
+            "trustName": "",
+            "alternateName": "",
+            "gender": " ",
+            "fico": "",
+            "stateOfInc": "",
+            "idType": "",
+            "idNumber": "",
+            "nationalityID": 479,
+            "incomeID": 0,
+            "currencyID": 0,
+            "stateID": 26,
+            "driverLicenseSTID": 0,
+            "isToken": null,
+            "emails": [
+                {
+                    "ownerEmailId": 5756,
+                    "ownerId": 12345,
+                    "emailOwner": "javiercesin@prodigy.net.mx",
+                    "isDefault": true
+                }
+            ],
+            "phones": [
+                {
+                    "ownerPhoneId": 24058,
+                    "ownerId": 12345,
+                    "phoneNumber": "5558134977",
+                    "isDefault": true,
+                    "countryId": 52
+                },
+                {
+                    "ownerPhoneId": 24059,
+                    "ownerId": 12345,
+                    "phoneNumber": "5524555800",
+                    "isDefault": false,
+                    "countryId": 52
+                },
+                {
+                    "ownerPhoneId": 24060,
+                    "ownerId": 12345,
+                    "phoneNumber": "5543606843",
+                    "isDefault": false,
+                    "countryId": 52
+                }
+            ]
+        },
+        "isWC1Answered": false,
+        "isWC2Answered": false
+      }    
+    };
+    return response.data;
+    */
+  },      
+
+  //Añadir un teléfono al usuario 
+  addphone2owner: async function(ownerId,PhoneNumber){  
+
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/OwnerContactInfo/addphone2owner',
+      {
+        "OwnerId":ownerId,
+        "PhoneNumber":PhoneNumber,
+        "PhoneTypeID":2,
+        "CountryId":52,
+        "isDefault":false
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting addphone2owner endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+  
+
+    /*  
+    let response = {
+      data:{
+        "codeResponse": 0,
+        "messageResponse": "Teléfono registrado con éxito."
+      }    
+    };
+    return response.data;
+    */
+  },
+
+  //Añadir un email al usuario 
+  addemail2owner: async function(ownerId,email){  
+
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/OwnerContactInfo/addemail2owner',
+      {
+        "OwnerId":ownerId,
+        "EmailOwner": email,
+        "EmailTypeID":2,
+        "isDefault":false        
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting addemail2owner endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+    /*  
+    let response = {
+      data:{
+        "codeResponse": 0,
+        "messageResponse": "Teléfono registrado con éxito."
+      }    
+    };
+    return response.data;
+    */
+  },
+
+  //Registra las respuestas de las preguntas de la encuesta/survey
+  savesurveyanswers: async function(AnswerValues){  
+    /*
+      PARAMETROS
+      {
+        “OwnerId”:12345,
+        “SurveyId”:4
+        “AnswerValues”: [
+          { “SurveyQuestionID”:25,
+          “AnswerValue”:”Respuesta”},
+        ]
+      }
+    */
+      let token = await this.login_royal();
+      //console.log(process.env.ROYAL_SERVER);
+      if(token.access_token){
+        
+        let axios_call = await axios.post(process.env.ROYAL_SERVER+'/savesurveyanswers',
+        AnswerValues,
+        {
+          headers: {
+            'Authorization': `Bearer ${token.access_token}`
+          }
+        })
+        .then(async (response) => {
+          console.log(response);
+          return response.data;
+        }).catch((error) => {
+          console.log(error);
+          return {
+            error: true,
+            detail: error,
+            message: "error connecting savesurveyanswers endpoint"
+          }
+        });    
+      
+        return axios_call; 
+  
+      }else{
+        return {
+          error: true,
+          message: "error connecting to royal systems"
+        }
+      }
+    /*  
+    let response = {
+      data:{
+        Error:false,
+        MessageError: "ERROR: El registro del survey….",
+        ResponseDate:"“2021-02-03"
+      }
+    };
+    return response.data;
+    */
+  },
+
+  //Registra los premios del usuario
+  registerprizes: async function(owner_id, contract_id, reason_id){ 
+  
+    /*
+    //Parámetros
+    {
+      "OwnerId":12345,
+      "ContractId":101217,
+      "ReasonId":4
+    }
+    */
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/WKGralInfo/registerprizes',
+      {
+        "OwnerId":owner_id,
+        "ContractId":contract_id,
+        "ReasonId":reason_id
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting registerprizes endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+      
+  },
+
   //Service Centers List
   servicecenters: async function(id_owner) {
     
@@ -237,169 +622,6 @@ module.exports = {
     };
     return response.data;
   },
-  //Welcome kit user info 
-  WKGralInfo: async function(id_owner) {  
-
-    let response = {
-      data:{
-        "ownerId": 12345,
-        "contracts": [
-            {
-                "contractId": 101217,
-                "siteId": 5,
-                "ownerID": 12345,
-                "contractNumber": "5-100726",
-                "contractDate": "2002-08-28T00:00:00",
-                "deededStatus": "Upgrade",
-                "siteName": "D-SR MX  Insurgentes",
-                "contractStatus": "Current Owner",
-                "points": 15000.00,
-                "pkgType": "SLVR",
-                "currencyName": "Mexican Pesos",
-                "codeCompaniaContable": 1613,
-                "companiaContable": "Gpo CMX S",
-                "incentives": []
-            }
-        ],
-        "ownerDetail": {
-            "ownerID": 12345,
-            "prospectID": 12345,
-            "siteID": 30,
-            "ownerNumber": "12345",
-            "ownerTypeID": 3,
-            "ownerType": "Swiss Member",
-            "ownerStatusID": 377,
-            "ownerStatus": "Active",
-            "salutation": "",
-            "company": "",
-            "lastName": "Cesin Farah",
-            "firstName": "Javier",
-            "streetAddress": "VIALIDAD OTRO ALGUNA CALLE NUM 150 150 ASENTAMIENTO OTRO COLONIA OTRO",
-            "city": "Ciudad de México",
-            "county": "DELEGACIÓN MUNICIPIO",
-            "state": "CMX",
-            "postalCode": "03500",
-            "countryID": 52,
-            "country": "Mexico",
-            "phone1": null,
-            "phone2": null,
-            "fax": null,
-            "email": null,
-            "ssn": "12345",
-            "exchangeNumber": "2684-20822",
-            "passportNum": "",
-            "driverLicense": "",
-            "birthdate": "1978-09-09T00:00:00",
-            "maritalStatusID": 265,
-            "maritalStatus": "Married",
-            "spouseName": "LOCM801216",
-            "occupationID": 366,
-            "occupation": "Unknown",
-            "householdIncome": 0,
-            "preferredLanguageID": 249,
-            "preferredLanguage": "Spanish",
-            "creditCardTypeID": null,
-            "creditCardType": null,
-            "creditCardNumber": null,
-            "creditCardExpiration": null,
-            "password": "",
-            "referralCreditBal": 0.00,
-            "steward": "",
-            "dateLocked": null,
-            "user1": "",
-            "user2": "",
-            "user3": "",
-            "user4": "",
-            "user5": "",
-            "user6": "PIF Azul L",
-            "user7": "royal123            ",
-            "user8": "",
-            "user9": "",
-            "user10": "",
-            "user11": 0,
-            "user12": 0,
-            "user13": null,
-            "user14": 0.00,
-            "user15": 1,
-            "useACH": null,
-            "accountName": null,
-            "routingNumber": null,
-            "accountNumber": null,
-            "ownerSubTypeID": 8,
-            "ownerSubType": "Silver",
-            "ccLastFour": null,
-            "driverLicenseST": "",
-            "trustName": "",
-            "alternateName": "",
-            "gender": " ",
-            "fico": "",
-            "stateOfInc": "",
-            "idType": "",
-            "idNumber": "",
-            "nationalityID": 479,
-            "incomeID": 0,
-            "currencyID": 0,
-            "stateID": 26,
-            "driverLicenseSTID": 0,
-            "isToken": null,
-            "emails": [
-                {
-                    "ownerEmailId": 5756,
-                    "ownerId": 12345,
-                    "emailOwner": "javiercesin@prodigy.net.mx",
-                    "isDefault": true
-                }
-            ],
-            "phones": [
-                {
-                    "ownerPhoneId": 24058,
-                    "ownerId": 12345,
-                    "phoneNumber": "5558134977",
-                    "isDefault": true,
-                    "countryId": 52
-                },
-                {
-                    "ownerPhoneId": 24059,
-                    "ownerId": 12345,
-                    "phoneNumber": "5524555800",
-                    "isDefault": false,
-                    "countryId": 52
-                },
-                {
-                    "ownerPhoneId": 24060,
-                    "ownerId": 12345,
-                    "phoneNumber": "5543606843",
-                    "isDefault": false,
-                    "countryId": 52
-                }
-            ]
-        },
-        "isWC1Answered": false,
-        "isWC2Answered": false
-      }    
-    };
-    return response.data;
-  },        
-  //Registro de premios por avance en el mapa.
-  registerprizes: async function(id_owner, contractId, ReasonId) {  
-
-    /*
-      OwnerId	Número de socio al que se le asigna el premio
-      ContractId	Número de contrato del socio
-      ReasonId	Clave del evento que es la razón de ganar el o los premios
-    */
-
-    let response = {
-      data:[
-        {
-            "incFol": 2110025,
-            "descOp": "Proceso Finalizado"
-        }
-      ]
-    
-    };
-    return response.data;
-  },
   //Catálogo de las encuestas disponibles
   surveycatalog: async function(){  
 
@@ -463,49 +685,8 @@ module.exports = {
     };
     return response.data;
   },
-  //Registra las respuestas de las preguntas de la encuesta/survey
-  savesurveyanswers: async function(ownerId,surveyId,AnswerValues){  
-    /*
-      PARAMETROS
-      {
-        “OwnerId”:12345,
-        “SurveyId”:4
-        “AnswerValues”: [
-          { “SurveyQuestionID”:25,
-          “AnswerValue”:”Respuesta”},
-        ]
-      }
-    */
-    let response = {
-      data:{
-        Error:false,
-        MessageError: "ERROR: El registro del survey….",
-        ResponseDate:"“2021-02-03"
-      }
-    };
-    return response.data;
-  },
 
-  //Añadir un teléfono al usuario 
-  addphone2owner: async function(ownerId,PhoneNumber){  
-    /*
-      PARAMETROS
-      {
-      "OwnerId":12345,
-      "PhoneNumber":"5558562162",
-      "PhoneTypeID":2,
-      "CountryId":52,
-      "isDefault":false
-      }
 
-    */
-    let response = {
-      data:{
-        "codeResponse": 0,
-        "messageResponse": "Teléfono registrado con éxito."
-      }    
-    };
-    return response.data;
-  },
+
 
 }  

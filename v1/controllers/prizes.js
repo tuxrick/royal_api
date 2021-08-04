@@ -1,6 +1,8 @@
 //Models
 const Prizes = require('../../v1/models/prizes');
 const User_prizes = require('../../v1/models/user_prizes');
+//Api royal util
+const api_royal = require('../../v1/api_royal.js');
 
 module.exports = {
 
@@ -30,11 +32,13 @@ module.exports = {
     //List all user prizes
     list_user_prizes: (req, res) => {
         
-        let id_gamer = req.params.id_gamer;
+        //let id_gamer = req.params.id_gamer;
+        
+        const gamer_info = req.decoded;
 
         User_prizes.findAll({
             where: {
-              id_gamer:id_gamer 
+              id_gamer:gamer_info.id 
             }
             }).then( prizes => {
 
@@ -57,9 +61,9 @@ module.exports = {
     },    
 
     //Save user prize
-    save_user_prize: (req, res) => {
-    
-        //Data received from body
+    save_user_prize: async (req, res) => {
+        
+        //Data received from body        
         const { id_prize } = req.body;
 
         //gamer decoded information
@@ -72,27 +76,49 @@ module.exports = {
         }
 
         //Http call to royal api to save prize 
-        //http call to royal api to send mail
+        let user_prize = await api_royal.registerprizes(gamer_info.id_owner, gamer_info.id_contract, id_prize);
+        //console.log(user_data);        
+        
+        if(user_prize.error == true){
+            return res.status(401).send({
+                message:user_prize.message,
+                error:user_prize.datail,
+                status: "error"  
+            });
+        }
 
-        User_prizes.create(prize_info).then( async created_prize => {
+        //if(user_prize.incFol !== 0){
+            User_prizes.create(prize_info).then( async created_prize => {
 
+                //http call to royal api to send mail
+
+                return res.status(200).send({
+                    data: {
+                        prize_info:prize_info
+                    },
+                    message:"User prize successfully saved",
+                    status: "success"
+                });            
+    
+            }).catch(err => {
+                            
+                return res.status(401).send({
+                    error: err,
+                    message:"Error saving prize",
+                    status: "error"
+                });
+                
+            });
+        /*
+        }else{
             return res.status(200).send({
-                data: {
-                    prize_info:prize_info
-                },
-                message:"User prize successfully saved",
+                data: {},
+                message:"Price already delivered",
                 status: "success"
             });            
-
-        }).catch(err => {
-                        
-            return res.status(401).send({
-                error: err,
-                message:"Error saving prize",
-                status: "error"
-            });
-            
-        });
+        }
+        */
+        
     },
 
 }        

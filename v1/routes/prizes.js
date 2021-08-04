@@ -7,8 +7,8 @@ module.exports = (router) => {
 	router.route('/list_prizes')
 		.get(prizes_controller.list_prizes);
 
-    router.route('/list_user_prizes/:id_gamer')
-		.get(validateToken, prizes_controller.list_user_prizes);
+    router.route('/list_user_prizes')
+		.post(validateToken, prizes_controller.list_user_prizes);
 
     router.route('/save_user_prize')
 		.post(validateToken, prizes_controller.save_user_prize);

@@ -11,7 +11,6 @@ const api_royal = require('../../v1/api_royal.js');
 //Models
 const Gamer = require('../../v1/models/gamers');
 const User = require('../../v1/models/users');
-const { create } = require('express-handlebars');
 
 module.exports = {
 
@@ -21,6 +20,14 @@ module.exports = {
         //Check if the user exists on royal by an http request directly to royal 
         let user_data = await api_royal.WKGralInfo(id_owner);
         //console.log(user_data);        
+
+        if(user_data.error == true){
+            return res.status(401).send({
+                message:user_data.message,
+                error:user_data.datail,
+                status: "error"  
+            });             
+        }
 
         if(user_data.ownerDetail.ownerID !== undefined){
 
@@ -208,6 +215,7 @@ module.exports = {
                         id_owner:gamer.id_owner, 
                         first_name:gamer.first_name,
                         last_name:gamer.last_name, 
+                        id_contract: gamer.id_contract
                     }, 
                     process.env.SECRET_KEY, {
                         expiresIn: '360d'
@@ -317,9 +325,26 @@ module.exports = {
 
 
             //Http request to the royal db to update user's email
+            let email_data = await api_royal.addemail2owner(id_owner,email);
 
-            //Http request to the royal db to update user's phone
+            if(email_data.error == true){
+                return res.status(401).send({
+                    message:email_data.message,
+                    error:email_data.datail,
+                    status: "error"  
+                });             
+            }                
 
+            //Http request to the royal db to update user's phone            
+            let phone_data = await api_royal.addphone2owner(id_owner,phone);
+
+            if(phone_data.error == true){
+                return res.status(401).send({
+                    message:phone_data.message,
+                    error:phone_data.datail,
+                    status: "error"  
+                });             
+            }
 
 
             //Create gamer if it desn't exists on game db
@@ -438,36 +463,39 @@ module.exports = {
         
         let id_owner = req.params.owner_id;
         //Survey answers received by the user
-        let { age, web_user, travel_with, best_time_to_contact } = req.body;
+        let { age, travel_with } = req.body;
 
-        //preparing the answers to the final request 
+        //setting the answers to the final request 
         let answers = {
             OwnerID: id_owner,
-            SurveyId: 4,//To validate
+            SurveyId: 4,
             AnswerValues:[
                 {
                     SurveyQuestionId:21,
                     AnswerValue: age
                 },
-                /*
-                {
-                    SurveyQuestionId:25,
-                    AnswerValue: web_user
-                },
                 {
                     SurveyQuestionId:23,
                     AnswerValue: travel_with
-                },
-                */
-                {
-                    SurveyQuestionId:23,
-                    AnswerValue: best_time_to_contact
                 },                        
             ]
         }
 
         //http request to answer the survey (savesurveyanswers)
+        let user_answers = await api_royal.savesurveyanswers(answers);
+        //console.log(user_data);        
+
+        if(user_answers.error == true){
+        /*
+            return res.status(401).send({
+                message:user_answers.message,
+                error:user_answers.datail,
+                status: "error"  
+            });             
+        */    
+        }
         
+
         //updating, user answered survey on local game db 
         Gamer.update(
             {
