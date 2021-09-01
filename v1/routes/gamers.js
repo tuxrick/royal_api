@@ -22,5 +22,16 @@ module.exports = (router) => {
 	router.route('/save_survey/:owner_id')
 		.post(gamer_controller.save_survey);
 
+	router.route('/send_campaign_mail/:campaign')
+		.get(validateToken,gamer_controller.send_campaign_mail);		
+
+	router.route('/set_skin')
+		.post(validateToken,gamer_controller.set_skin);		
+
+	router.route('/unlock_skin')
+		.post(validateToken,gamer_controller.unlock_skin);
+		
+	router.route('/list_user_skins')
+		.get(validateToken,gamer_controller.list_user_skins);		
 	return router;    
 };  

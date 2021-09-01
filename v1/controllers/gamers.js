@@ -1,8 +1,5 @@
 //Libraries
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const Sequelize = require('sequelize');
-const db = require('../../database/db.js');
 const randomize = require('randomatic');
 
 //Api royal util
@@ -11,40 +8,96 @@ const api_royal = require('../../v1/api_royal.js');
 //Models
 const Gamer = require('../../v1/models/gamers');
 const User = require('../../v1/models/users');
+const UserSkin = require('../../v1/models/user_skins');
 
 module.exports = {
 
     info: async (req, res) => {
 
 	    let id_owner = req.params.owner_id;	            
-        //Check if the user exists on royal by an http request directly to royal 
-        let user_data = await api_royal.WKGralInfo(id_owner);
-        //console.log(user_data);        
+        
+        //Check if user already exists on local game DB 
+        //Getting gamer info 
+	    Gamer.findOne({
+	        where: {
+                id_owner:id_owner
+	        }
+	    }).then(async gamer => {
+            if(gamer){
 
-        if(user_data.error == true){
-            return res.status(401).send({
-                message:user_data.message,
-                error:user_data.datail,
-                status: "error"  
-            });             
-        }
+                //Check if the user exists on royal by an http request directly to royal 
+                let user_data = await api_royal.WKGralInfo(id_owner);
+                
+                if(user_data.error == true){
+                    return res.status(401).send({
+                        message:user_data.message,
+                        error:user_data.datail,
+                        status: "error"  
+                    });             
+                }
 
-        if(user_data.ownerDetail.ownerID !== undefined){
+                user_data.ownerDetail.email = gamer.email; 
+                user_data.ownerDetail.phone1 = gamer.phone;
 
-            return res.status(200).send({
-                data: user_data,
-                message:"Successfull request",
-                status: "success"  
-            });
+                if(user_data.ownerDetail.ownerID !== undefined){
 
-        }else{
-            return res.status(401).send({
-                message:"User not found in royal servers",
-                status: "error"  
-            });            
-        }
+                    return res.status(200).send({
+                        data: user_data,
+                        message:"Successfull request",
+                        status: "success"  
+                    });
+
+                }else{
+                    return res.status(401).send({
+                        message:"User not found in royal servers",
+                        status: "error"  
+                    });            
+                }
+
+            }else{
+
+                //Check if the user exists on royal by an http request directly to royal 
+                let user_data = await api_royal.WKGralInfo(id_owner);
+
+                if(user_data.error == true){
+                    return res.status(401).send({
+                        message:user_data.message,
+                        error:user_data.datail,
+                        status: "error"  
+                    });             
+                }
+
+                if(user_data.ownerDetail.ownerID !== undefined){
+
+                    return res.status(200).send({
+                        data: user_data,
+                        message:"Successfull request",
+                        status: "success"  
+                    });
+
+                }else{
+                    return res.status(401).send({
+                        message:"User not found in royal servers",
+                        status: "error"  
+                    });            
+                }
+
+
+
+            }
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                message:"Error getting the gamer",
+                status: "error"
+            })
+        });
+
+        
+
 
     },
+    
     //Send confitmation code
     send_confirmation_code: async (req, res) => {
 
@@ -52,7 +105,7 @@ module.exports = {
 
         //Getting user info
         let user_data = await api_royal.WKGralInfo(id_owner);
-
+        console.log(user_data);
         //Check if user exists in royal system 
         if(user_data.ownerDetail.ownerID !== undefined){
             //Get the user from DB
@@ -111,7 +164,8 @@ module.exports = {
                         console.log(created_gamer);
 
                         //Enviar código de plantilla de correo con id de plantilla
-                        //send_code (id_owner, code, ...)
+                        //send_code (id_owner, code, ...)                        
+                        let sendcodemail = await api_royal.sendcodemail(gamer_info.email, gamer_info.id_owner, gamer_info.first_name, gamer_info.last_name, code.code);
 
                         created_gamer.code = code.code;
                         created_gamer.expiration_time = code.expiration_time;
@@ -150,9 +204,12 @@ module.exports = {
                         //Generate the code
                         //Update the gamer and send the code and expiration time
                         let code = await generateCodeAndUpdate(id_owner);
-
+                        
                         gamer_data.code = code.code;
                         gamer_data.expiration_time = code.expiration_time;                        
+
+                        //send_code (id_owner, code, ...)                        
+                        let sendcodemail = await api_royal.sendcodemail(gamer_data.email, gamer_data.id_owner, gamer_data.first_name , gamer_data.last_name, code.code);
 
                         return res.status(200).send({
                             data: {
@@ -213,6 +270,7 @@ module.exports = {
                     let token = jwt.sign({
                         id:gamer.id, 
                         id_owner:gamer.id_owner, 
+                        email:gamer.email,
                         first_name:gamer.first_name,
                         last_name:gamer.last_name, 
                         id_contract: gamer.id_contract
@@ -319,7 +377,7 @@ module.exports = {
         
         //Get royal user to see if exsits 
         let user_data = await api_royal.WKGralInfo(id_owner);
-        //console.log(user_data);        
+        console.log(user_data);        
 
         if(user_data.ownerDetail.ownerID !== undefined){
 
@@ -355,18 +413,18 @@ module.exports = {
                 }
             }).then(async gamer => {
                 
-                console.log("///////////////////////////////");
-                console.log(JSON.stringify(gamer));
-
                 //If there is not gamer on the DB
                 if (!gamer) {
 
-                    //We create the user with the info from the system                    
+                    //console.log("///////////////////////////////");
+                    //console.log(JSON.stringify(gamer));
 
+                    //We create the user with the info from the system                    
+                    //We use email and phone received from the user
+                    
                     let gamer_info = {
                         id_owner: user_data.ownerDetail.ownerID,
                         id_site: user_data.ownerDetail.siteID,
-                        id_contract: user_data.contracts[0].contractId,
                         id_owner_type: user_data.ownerDetail.ownerTypeID,
                         ownertype: user_data.ownerDetail.ownerType,
                         ownerstatus: user_data.ownerDetail.ownerStatus,
@@ -377,7 +435,6 @@ module.exports = {
                         city: user_data.ownerDetail.city,
                         country: user_data.ownerDetail.country,
                         state: user_data.ownerDetail.state,
-                        //We use email and phone received from the user
                         email: email,
                         phone: phone,
                         birthdate: user_data.ownerDetail.birthdate,
@@ -387,10 +444,15 @@ module.exports = {
                         validated_email: false,
                         id_avatar: 0,
                         code: 000000,
-                        expiration_time: Date.now(),
+                        expiration_time: new Date(),
                         answered_survey: 0
                     }
-
+                    
+                    if(user_data.contracts[0] !== undefined){
+                        gamer_info.id_contract = user_data.contracts[0].contractId;
+                    }else{
+                        gamer_info.id_contract = null;
+                    }
 	                Gamer.create(gamer_info).then( async created_gamer => {
                         
 	                    return res.status(200).send({
@@ -400,7 +462,7 @@ module.exports = {
                             message:"User created and updated",
                             status: "success"
 	                    });    
-
+                    
 	                }).catch(err => {
 		                
 	                    return res.status(401).send({
@@ -409,7 +471,7 @@ module.exports = {
 	                        status: "error"
 	                    });
 	                    
-	                });                    
+	                });                   
 
                 }
                 //If the gamer already exists on the local DB
@@ -436,7 +498,7 @@ module.exports = {
                     }).catch(err => {
                         res.status(401).json({ 
                             data: err,
-                            status: "error"
+                            status: "error pepe"
                         })
                     })
 
@@ -445,14 +507,14 @@ module.exports = {
             }).catch(err => {
                 res.status(401).json({ 
                     data: err,
-                    status: "error"
+                    status: "error pecas"
                 })
 	        });
 
         }else{
             return res.status(401).send({
                 message:"User not found in royal servers",
-                status: "error"  
+                status: "error pica"  
             });            
         }
 
@@ -484,18 +546,17 @@ module.exports = {
         //http request to answer the survey (savesurveyanswers)
         let user_answers = await api_royal.savesurveyanswers(answers);
         //console.log(user_data);        
-
+        
         if(user_answers.error == true){
-        /*
+        
             return res.status(401).send({
                 message:user_answers.message,
                 error:user_answers.datail,
                 status: "error"  
             });             
-        */    
+           
         }
         
-
         //updating, user answered survey on local game db 
         Gamer.update(
             {
@@ -521,8 +582,143 @@ module.exports = {
             })
         })
 
+    },
+    //Send email to user 
+    send_campaign_mail: async (req, res) => {
+        let campaign = req.params.campaign;
+        const user_info = req.decoded;
+        
+        let data = {
+            "email": user_info.email,
+            "data": {
+                "global":{
+                    "Nombre": user_info.first_name,
+                    "OwnerID": user_info.id_owner,
+                }
+            }
+        };
+
+        if(
+            (campaign == 3097169)||
+            (campaign == 3097260)||
+            (campaign == 3097263)||
+            (campaign == 3097287)||
+            (campaign == 3097290)||
+            (campaign == 3097264)||
+            (campaign == 3097289)||
+            (campaign == 3097288)||
+            (campaign == 3097265)
+        ){
+            data = {
+                "email": user_info.email,
+                "data": {
+                    "global":{
+                        "Nombre": user_info.first_name,
+                        "OwnerID": user_info.id_owner,
+                        "montostars":"1000000",
+                        "montorewards":"5000"
+                    }
+                }
+            };            
+        }
+
+        let sendcodemail = await api_royal.sendcampaignmail(campaign, data);
+
+        return res.status(200).send({
+            data: sendcodemail,
+            message: "Successfull request",
+            status: "success"
+        });  
+    },
+
+    //Set Skin
+    set_skin: async (req, res) => {
+        
+        let id_skin  = req.body.id_skin;
+        let user_info= req.decoded;
 
 
+        Gamer.update(
+            {
+                id_avatar: id_skin
+            },
+            {
+                where:{
+                    id_owner: user_info.id_owner
+                }
+            }
+        ).then(response => {
+
+            return res.status(200).send({
+                data: response,
+                message:"User updated",
+                status: "success"
+            });    
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                status: "error"
+            })
+        });
+
+    },
+
+    //Unlock Skin
+    unlock_skin:(req,res) => {
+        let id_skin = req.body.id_skin;
+        let user_info = req.decoded;
+        let skin_info = {
+            id_gamer:user_info.id,
+            id_skin: id_skin
+        }
+
+        UserSkin.create(skin_info).then(unlocked_skin => {
+            //Validación para no repetirlas
+            return res.status(200).send({
+                data: unlocked_skin,
+                message:"Skin unlocked",
+                status: "success"
+            });              
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                message: "error saving skin",
+                status: "error"
+            })
+        });
+    },
+
+    //List of user skins
+    list_user_skins: (req,res)=>{
+
+        let user_info = req.decoded;
+
+        UserSkin.findAll({
+            where: {
+                id_gamer: user_info.id
+            }
+        }).then(async gamer_skins => {
+            
+            let skin_list = []; 
+            for(let i= 0; i<gamer_skins.length ; i++){
+                skin_list.push(gamer_skins[i].id_skin);
+            }
+
+            return res.status(200).send({
+                data: skin_list,
+                message:"Skins listed",
+                status: "success"
+            });                 
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                message: "error listing user skins",
+                status: "error"
+            })
+        });
     }
 
 }

@@ -91,6 +91,8 @@ module.exports = {
             User_prizes.create(prize_info).then( async created_prize => {
 
                 //http call to royal api to send mail
+                //let sendprizemail = api_royal.sendprizemail(owner_id, name, prize_id)
+
 
                 return res.status(200).send({
                     data: {

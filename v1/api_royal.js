@@ -1,4 +1,6 @@
 const axios = require('axios');
+const crypto = require('crypto');
+const iso8601 = require('iso8601');
 
 module.exports = {
   //Getting token from royal to make requests to their system
@@ -17,10 +19,10 @@ module.exports = {
       "client_id": royal_data.client_id
     })
     .then(async (response) => {
-      //console.log(response);
+      console.log(response);
       return response.data;
     }).catch((error) => {
-      //console.log(error);
+      console.log("error " + error);
       return error;
     });    
 
@@ -32,19 +34,19 @@ module.exports = {
 
 
     let token = await this.login_royal();
-    console.log(process.env.ROYAL_SERVER);
+
     if(token.access_token){
       
-      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/' + id_owner ,{
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/rwgralownerinfo?ownerId=' + id_owner ,{
         headers: {
           'Authorization': `Bearer ${token.access_token}`
         }
       })
       .then(async (response) => {
-        //console.log(response);
+        console.log(response);
         return response.data;
       }).catch((error) => {
-        //console.log(error);
+        console.log(error);
         return {
           error: true,
           detail: error,
@@ -225,10 +227,10 @@ module.exports = {
         }
       })
       .then(async (response) => {
-        console.log(response);
+        //console.log(response);
         return response.data;
       }).catch((error) => {
-        console.log(error);
+        //console.log(error);
         return {
           error: true,
           detail: error,
@@ -277,10 +279,10 @@ module.exports = {
         }
       })
       .then(async (response) => {
-        console.log(response);
+        //console.log(response);
         return response.data;
       }).catch((error) => {
-        console.log(error);
+        //console.log(error);
         return {
           error: true,
           detail: error,
@@ -324,7 +326,7 @@ module.exports = {
       //console.log(process.env.ROYAL_SERVER);
       if(token.access_token){
         
-        let axios_call = await axios.post(process.env.ROYAL_SERVER+'/savesurveyanswers',
+        let axios_call = await axios.post(process.env.ROYAL_SERVER+'/survey/savesurveyanswers',
         AnswerValues,
         {
           headers: {
@@ -332,10 +334,10 @@ module.exports = {
           }
         })
         .then(async (response) => {
-          console.log(response);
+          //console.log(response);
           return response.data;
         }).catch((error) => {
-          console.log(error);
+          //console.log(error);
           return {
             error: true,
             detail: error,
@@ -393,7 +395,7 @@ module.exports = {
         console.log(response);
         return response.data;
       }).catch((error) => {
-        console.log(error);
+        console.log("error " + error);
         return {
           error: true,
           detail: error,
@@ -411,6 +413,105 @@ module.exports = {
     }
       
   },
+
+  //Envía el código de activación del juego para el usuario
+  sendcodemail: async function(email, owner_id, name, last_name, code){
+    /*
+    {
+      "email": "tuxrick@gmail.com",
+      "data": 
+        {
+          "global":{
+            "Nombre": "Mario LC (Prueba 09/07/2021)",
+            "OwnerID": "666",
+            "montostars":"9,999",
+            "montorewards":"1000"
+        }
+      }
+    }
+    */
+
+    
+    
+    const user = 'royalholiday005';
+    const secret = 'AUi6vsXytkfuvLMsnbrZ';
+    
+    let wss_header = getWsseHeader(user,secret);
+
+    let axios_call = await axios.post('https://api.emarsys.net/api/v2/email/3085447/broadcast',    
+    {
+      "email": email,
+      "data": {
+        "global":{
+          "Nombre": name,
+          "OwnerID": owner_id,
+        "claveact": code
+        }
+      }
+    },
+    {
+      headers: {
+        //"x-wsse": "UsernameToken Username=\"royalholiday005\", PasswordDigest=\"OGFmMWUzNzYyZTFhN2U5OWE5N2IwM2EwYzZhYTMyOWY1NjIxNmUyOA==\", Nonce=\"4c060407cc822eaab9e54aa7b6001740\", Created=\"2021-08-04T20:42:59Z\"",
+        "X-WSSE":wss_header + ' Content-type: application/json;charset="utf-8"',
+        "content-type": "application/json"
+      }
+    })
+    .then(async (response) => {
+      //console.log(response);
+      return response.data;
+    }).catch((error) => {
+      //console.log(error);
+      return {
+        error: true,
+        detail: error,
+        message: "error connecting emarsys endpoint"
+      }
+    });
+
+    return axios_call;
+  },
+
+  //Envía el Correo al obtener un premio
+  sendprizemail: async function(owner_id, name, prize_id){
+    
+    const user = 'royalholiday005';
+    const secret = 'AUi6vsXytkfuvLMsnbrZ';
+    
+    let wss_header = getWsseHeader(user,secret);
+
+    let axios_call = await axios.post('https://api.emarsys.net/api/v2/email/3085447/broadcast',    
+    {
+      "email": email,
+      "data": {
+        "global":{
+          "Nombre": name,
+          "OwnerID": owner_id,
+        "claveact": code
+        }
+      }
+    },
+    {
+      headers: {
+        //"x-wsse": "UsernameToken Username=\"royalholiday005\", PasswordDigest=\"OGFmMWUzNzYyZTFhN2U5OWE5N2IwM2EwYzZhYTMyOWY1NjIxNmUyOA==\", Nonce=\"4c060407cc822eaab9e54aa7b6001740\", Created=\"2021-08-04T20:42:59Z\"",
+        "X-WSSE":wss_header + ' Content-type: application/json;charset="utf-8"',
+        "content-type": "application/json"
+      }
+    })
+    .then(async (response) => {
+      //console.log(response);
+      return response.data;
+    }).catch((error) => {
+      //console.log(error);
+      return {
+        error: true,
+        detail: error,
+        message: "error connecting emarsys endpoint"
+      }
+    });
+
+    return axios_call;
+  },
+
 
   //Service Centers List
   servicecenters: async function(id_owner) {
@@ -686,7 +787,51 @@ module.exports = {
     return response.data;
   },
 
+  sendcampaignmail: async function (campaign, data){
 
+    const user = 'royalholiday005';
+    const secret = 'AUi6vsXytkfuvLMsnbrZ';
+    
+    let wss_header = getWsseHeader(user,secret);
 
+    let axios_call = await axios.post('https://api.emarsys.net/api/v2/email/'+campaign+'/broadcast',    
+    JSON.stringify(data),
+    {
+      headers: {
+        "X-WSSE":wss_header + ' Content-type: application/json;charset="utf-8"',
+        "content-type": "application/json"
+      }
+    })
+    .then(async (response) => {
+      //console.log(response);
+      return response.data;
+    }).catch((error) => {
+      //console.log(error);
+      return {
+        error: true,
+        detail: error,
+        message: "error connecting emarsys endpoint"
+      }
+    });
 
+    return axios_call;    
+  }
 }  
+
+
+function getWsseHeader(user, secret) {
+  let nonce = crypto.randomBytes(16).toString('hex');
+  let timestamp = iso8601.fromDate(new Date());
+
+  let digest = base64Sha1(nonce + timestamp + secret);
+
+  return `Username="${user}", PasswordDigest="${digest}", Nonce="${nonce}", Created="${timestamp}"`
+};
+
+function base64Sha1(str) {
+  let hexDigest = crypto.createHash('sha1')
+    .update(str)
+    .digest('hex');
+
+  return new Buffer(hexDigest).toString('base64');
+};

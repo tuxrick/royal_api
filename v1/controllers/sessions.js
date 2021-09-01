@@ -1,6 +1,5 @@
 
 //Models
-const sessions = require('../../v1/models/sessions');
 const Session = require('../../v1/models/sessions');
 
 module.exports = {
