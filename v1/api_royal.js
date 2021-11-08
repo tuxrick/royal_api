@@ -19,10 +19,10 @@ module.exports = {
       "client_id": royal_data.client_id
     })
     .then(async (response) => {
-      console.log(response);
+      //console.log(response);
       return response.data;
     }).catch((error) => {
-      console.log("error " + error);
+      //console.log("error " + error);
       return error;
     });    
 
@@ -43,10 +43,10 @@ module.exports = {
         }
       })
       .then(async (response) => {
-        console.log(response);
+        //console.log(response);
         return response.data;
       }).catch((error) => {
-        console.log(error);
+        //console.log(error);
         return {
           error: true,
           detail: error,
@@ -207,7 +207,7 @@ module.exports = {
   },      
 
   //Añadir un teléfono al usuario 
-  addphone2owner: async function(ownerId,PhoneNumber){  
+  addphone2owner: async function(ownerId,PhoneNumber,phone_type){  
 
     let token = await this.login_royal();
     //console.log(process.env.ROYAL_SERVER);
@@ -217,7 +217,7 @@ module.exports = {
       {
         "OwnerId":ownerId,
         "PhoneNumber":PhoneNumber,
-        "PhoneTypeID":2,
+        "PhoneTypeID":phone_type,
         "CountryId":52,
         "isDefault":false
       },
@@ -334,10 +334,10 @@ module.exports = {
           }
         })
         .then(async (response) => {
-          //console.log(response);
+          console.log(response);
           return response.data;
         }).catch((error) => {
-          //console.log(error);
+          console.log(error);
           return {
             error: true,
             detail: error,
@@ -392,10 +392,10 @@ module.exports = {
         }
       })
       .then(async (response) => {
-        console.log(response);
+        //console.log(response);
         return response.data;
       }).catch((error) => {
-        console.log("error " + error);
+        //console.log("error " + error);
         return {
           error: true,
           detail: error,
@@ -786,7 +786,7 @@ module.exports = {
     };
     return response.data;
   },
-
+  //Manda mail de campaña
   sendcampaignmail: async function (campaign, data){
 
     const user = 'royalholiday005';
@@ -815,7 +815,140 @@ module.exports = {
     });
 
     return axios_call;    
-  }
+  },
+
+  //Guarda info para contactar después
+  save_contact_item: async function(contact_info, owner_id, contract_id, DateDay, DateTime){
+    
+    let token = await this.login_royal();
+    
+    if(token.access_token){
+
+      /*
+        {​
+          "ContactTypeId":86,
+          "OwnerId":1482543,
+          "ContractId":422448,
+          "DateDay":"2021-10-27",
+          "DateTime":"17:15",
+          "ContactNote":"de 14 a 15 pm :)"
+        }​
+      */
+
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/Contacts/saveContact',
+      {
+        "ContactTypeId":2,
+        "OwnerId":owner_id,
+        "ContractId":contract_id,
+        "ContactNote":contact_info,
+        "DateDay":DateDay,
+        "DateTime":DateTime,        
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log("error " + error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting save contact endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+  },
+
+  //Save contact item
+  automized_payments: async function(contact_info, owner_id, contract_id){ 
+  
+    let token = await this.login_royal();
+    if(token.access_token){
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/Contacts/saveContact',
+      {
+        "ContactTypeId":87,
+        "OwnerId":owner_id,
+        "ContractId":contract_id,
+        "ContactNote":contact_info,
+        "DateDay":"",
+        "DateTime":"",        
+      },
+      {        
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log("error " + error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting automized_payments endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+      
+  },  
+
+  //Registra los premios del usuario
+  earned_prizes: async function(owner_id){ 
+  
+    let token = await this.login_royal();
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/getwonprizesbyowner?ownerId=' + owner_id,
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log("error " + error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting getwonprizesbyowner endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+      
+  },  
+
 }  
 
 

@@ -23,7 +23,7 @@ module.exports = (router) => {
 		.post(gamer_controller.save_survey);
 
 	router.route('/send_campaign_mail/:campaign')
-		.get(validateToken,gamer_controller.send_campaign_mail);		
+		.post(validateToken,gamer_controller.send_campaign_mail);		
 
 	router.route('/set_skin')
 		.post(validateToken,gamer_controller.set_skin);		
@@ -32,6 +32,15 @@ module.exports = (router) => {
 		.post(validateToken,gamer_controller.unlock_skin);
 		
 	router.route('/list_user_skins')
-		.get(validateToken,gamer_controller.list_user_skins);		
+		.post(validateToken,gamer_controller.list_user_skins);
+		
+	router.route('/active_gamers')
+		.post(gamer_controller.active_gamers);
+
+	router.route('/save_contact_item')
+		.post(validateToken,gamer_controller.save_contact_item);
+		
+	router.route('/automized_payments_format')
+		.post(validateToken,gamer_controller.automized_payments_format);		
 	return router;    
 };  

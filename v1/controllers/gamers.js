@@ -1,6 +1,7 @@
 //Libraries
 const jwt = require('jsonwebtoken');
 const randomize = require('randomatic');
+const db = require('../../database/db.js');
 
 //Api royal util
 const api_royal = require('../../v1/api_royal.js');
@@ -38,11 +39,49 @@ module.exports = {
 
                 user_data.ownerDetail.email = gamer.email; 
                 user_data.ownerDetail.phone1 = gamer.phone;
+                user_data.answered_survey = gamer.answered_survey;
 
                 if(user_data.ownerDetail.ownerID !== undefined){
 
+                    let prizes_data = await api_royal.earned_prizes(id_owner);
+                
+                    if(prizes_data.error == true){
+                        return res.status(401).send({
+                            message:prizes_data.message,
+                            error:prizes_data.datail,
+                            status: "error"  
+                        });             
+                    }
+
+                    let compiled_rewards = {
+                        total_nights:0,
+                        total_upgrades:0,
+                        total_rewards:0,
+                        used_upgrades:0, 
+                        used_nights:0, 
+                        used_rewards:0
+                    }
+                    
+                    
+                    for(let i=0; i<prizes_data.length; i++){
+                        compiled_rewards.total_nights += prizes_data[i].nights;
+                        compiled_rewards.total_upgrades += prizes_data[i].unitUpgrade;
+                        compiled_rewards.total_rewards += prizes_data[i].pointsRewards;
+                        if(prizes_data[i].used == 1){
+                            compiled_rewards.used_rewards +=  prizes_data[i].pointsRewards;
+                            compiled_rewards.used_nights += prizes_data[i].nights;
+                            if(prizes_data[i].unitUpgrade != 0){
+                                compiled_rewards.used_upgrades += 1;
+                            }
+                        }
+                    }
+
                     return res.status(200).send({
-                        data: user_data,
+                        data: {
+                            user_data,
+                            prizes_data,
+                            compiled_rewards
+                        },
                         message:"Successfull request",
                         status: "success"  
                     });
@@ -69,8 +108,48 @@ module.exports = {
 
                 if(user_data.ownerDetail.ownerID !== undefined){
 
+                    user_data.answered_survey = false;
+
+                    let prizes_data = await api_royal.earned_prizes(id_owner);
+                
+                    if(prizes_data.error == true){
+                        return res.status(401).send({
+                            message:prizes_data.message,
+                            error:prizes_data.datail,
+                            status: "error"  
+                        });             
+                    }
+
+                    let compiled_rewards = {
+                        total_nights:0,
+                        total_upgrades:0,
+                        total_rewards:0,
+                        used_upgrades:0, 
+                        used_nights:0, 
+                        used_rewards:0
+                    }
+                    
+                    
+                    for(let i=0; i<prizes_data.length; i++){
+                        compiled_rewards.total_nights += prizes_data[i].nights;
+                        compiled_rewards.total_upgrades += prizes_data[i].unitUpgrade;
+                        compiled_rewards.total_rewards += prizes_data[i].pointsRewards;
+                        if(prizes_data[i].used == 1){
+                            compiled_rewards.used_rewards +=  prizes_data[i].pointsRewards;
+                            compiled_rewards.used_nights += prizes_data[i].nights;
+                            if(prizes_data[i].unitUpgrade != 0){
+                                compiled_rewards.used_upgrades += 1;
+                            }
+                        }
+                    }
+
+
                     return res.status(200).send({
-                        data: user_data,
+                        data: {
+                            user_data,
+                            prizes_data,
+                            compiled_rewards
+                        },
                         message:"Successfull request",
                         status: "success"  
                     });
@@ -81,8 +160,6 @@ module.exports = {
                         status: "error"  
                     });            
                 }
-
-
 
             }
         }).catch(err => {
@@ -288,9 +365,16 @@ module.exports = {
                     });                    
 
                 }else{
+                    let message = "Código incorrecto o expirado/Wrong or invlaid code"; 
+                    if(valid_date == true){
+                        message = "Expired Code / Código Expirado";
+                    }
+                    if(gamer.code !== code){
+                        message = "Wrong code / Código Incorrectoo";
+                    }
                     res.status(401).json({ 
                         data: "",
-                        message: "Wrong or expired code",
+                        message: message,
                         status: "error"
                     })
                 }
@@ -373,7 +457,7 @@ module.exports = {
     update_gamer: async (req, res) => {
         
         let id_owner = req.params.owner_id;
-        const { email, phone } = req.body;
+        const { email, phone, phone_type } = req.body;
         
         //Get royal user to see if exsits 
         let user_data = await api_royal.WKGralInfo(id_owner);
@@ -394,7 +478,7 @@ module.exports = {
             }                
 
             //Http request to the royal db to update user's phone            
-            let phone_data = await api_royal.addphone2owner(id_owner,phone);
+            let phone_data = await api_royal.addphone2owner(id_owner,phone, phone_type);
 
             if(phone_data.error == true){
                 return res.status(401).send({
@@ -525,7 +609,7 @@ module.exports = {
         
         let id_owner = req.params.owner_id;
         //Survey answers received by the user
-        let { age, travel_with } = req.body;
+        let { age, web_user } = req.body;
 
         //setting the answers to the final request 
         let answers = {
@@ -534,17 +618,62 @@ module.exports = {
             AnswerValues:[
                 {
                     SurveyQuestionId:21,
-                    AnswerValue: age
-                },
-                {
-                    SurveyQuestionId:23,
-                    AnswerValue: travel_with
-                },                        
+                    SurveyAnswerID: age,
+                    AnswerValue:"",
+                    SurveyResultID:0
+                },           
             ]
-        }
+        };
 
         //http request to answer the survey (savesurveyanswers)
         let user_answers = await api_royal.savesurveyanswers(answers);
+
+        let user_answer_two = {
+            OwnerID: id_owner,
+            SurveyId: 4,
+            AnswerValues:[
+                {
+                    SurveyAnswerID: 806,//SI CONTESTA QUE NO ESTE VALOR ES 25 
+                    AnswerValue: "Yes",//SI CONTESTA NO ESTE VALOR ES NO
+                    SurveyResultID: 0,
+                    SurveyQuestionID: 37
+           
+                },           
+            ]
+        };
+        
+        if(web_user == "true"){
+            
+            user_answer_two.AnswerValues[0].SurveyAnswerID = 806;
+            user_answer_two.AnswerValues[0].AnswerValue = "Yes";
+        }else{
+            
+            user_answer_two.AnswerValues[0].SurveyAnswerID = 807;
+            user_answer_two.AnswerValues[0].AnswerValue = "No";            
+        }
+
+        //http request to answer the survey (savesurveyanswers)
+        let user_answers_two = await api_royal.savesurveyanswers(user_answer_two);
+
+/*
+INFORMACION PARA GUARDAR WEB USER 
+{
+    "OwnerId":12345,
+    "SurveyId":1,
+    "AnswerValues":
+    [   {
+        "SurveyAnswerID": 24,//SI CONTESTA QUE NO ESTE VALOR ES 25 
+         "AnswerValue": "Yes",//SI CONTESTA NO ESTE VALOR ES NO
+        "SurveyResultID": 0,
+        "SurveyQuestionID": 4
+       
+        } 
+    ]
+
+}
+*/
+
+
         //console.log(user_data);        
         
         if(user_answers.error == true){
@@ -556,7 +685,17 @@ module.exports = {
             });             
            
         }
+
+        if(user_answers_two.error == true){
         
+            return res.status(401).send({
+                message:user_answers.message,
+                error:user_answers.datail,
+                status: "error"  
+            });             
+           
+        }        
+
         //updating, user answered survey on local game db 
         Gamer.update(
             {
@@ -673,21 +812,53 @@ module.exports = {
             id_skin: id_skin
         }
 
-        UserSkin.create(skin_info).then(unlocked_skin => {
-            //Validación para no repetirlas
-            return res.status(200).send({
-                data: unlocked_skin,
-                message:"Skin unlocked",
-                status: "success"
-            });              
+
+        UserSkin.findAll({
+            where: {
+                id_gamer: user_info.id,
+                id_skin: id_skin
+            }
+        }).then( user_skins => {
+
+            console.log("SKINS");
+            console.log(user_skins);
+
+            //Scenario where the user don't have the skin
+            if(user_skin.length() == 0){
+
+                UserSkin.create(skin_info).then(unlocked_skin => {
+                    return res.status(200).send({
+                        data: unlocked_skin,
+                        message:"Skin unlocked",
+                        status: "success"
+                    });              
+        
+                }).catch(err => {
+                    res.status(401).json({ 
+                        data: err,
+                        message: "error saving skin",
+                        status: "error"
+                    })
+                });
+                        
+
+            }else{
+                return res.status(200).send({
+                    data: '',
+                    message:"Skin already unlocked",
+                    status: "success"
+                });                              
+            }
 
         }).catch(err => {
             res.status(401).json({ 
                 data: err,
-                message: "error saving skin",
+                message: "error getting skin",
                 status: "error"
             })
         });
+
+        
     },
 
     //List of user skins
@@ -719,7 +890,95 @@ module.exports = {
                 status: "error"
             })
         });
-    }
+    },
+
+    //List of gamers and last connections
+    active_gamers: (req,res)=>{
+
+        let id_owner = req.body.id_owner;
+
+        let query = 'SELECT gamers.id_owner, MAX(date) AS last_conn FROM gamers LEFT JOIN sessions ON gamers.id = sessions.id_gamer ';
+
+        console.log("owner" + id_owner);
+
+        if(
+            (id_owner != "")&&
+            (id_owner != null)&&
+            (id_owner != undefined)&&
+            (id_owner != "undefined")
+        ){
+            query += " WHERE gamers.id_owner = " + id_owner;
+        }
+
+        query += " GROUP BY gamers.id_owner";
+
+        db.sequelize.query(query)
+        .then(result => {
+            res.status(200).json({ 
+                data: result[0],
+                status: "success"
+            });					
+        }).catch(err => {
+            res.status(200).json({ 
+                data: err,
+                status: "error"
+            });
+        })
+
+    },
+
+    save_contact_item: async (req,res)=>{
+
+        let {contact_info,date_day,date_time}= req.body;
+
+        const user_info = req.decoded;
+
+        let user_contact = await api_royal.save_contact_item(contact_info, user_info.id_owner, user_info.id_contract,date_day,date_time);
+        
+        
+        if(user_contact.error == true){
+        
+            return res.status(401).send({
+                message:user_contact.message,
+                error:user_contact.datail,
+                status: "error"  
+            });             
+           
+        }else{
+            return res.status(200).send({
+                data: "",
+                message:"Contact correctly answered",
+                status: "success"
+            });             
+        }         
+
+    },
+
+    automized_payments_format: async (req,res)=>{
+
+        let contact_info= req.body.contact_info;
+        const user_info = req.decoded;
+
+        let user_contact = await api_royal.automized_payments(contact_info, user_info.id_owner, user_info.id_contract);
+        
+        
+        if(user_contact.error == true){
+        
+            return res.status(401).send({
+                message:user_contact.message,
+                error:user_contact.datail,
+                status: "error"  
+            });             
+           
+        }else{
+            return res.status(200).send({
+                data: "",
+                message:"Automized payments correctly answered",
+                status: "success"
+            });             
+        }         
+
+    }          
 
 }
 
