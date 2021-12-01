@@ -24,6 +24,9 @@ module.exports = {
                 id_owner:id_owner
 	        }
 	    }).then(async gamer => {
+
+            
+
             if(gamer){
 
                 //Check if the user exists on royal by an http request directly to royal 
@@ -98,6 +101,8 @@ module.exports = {
                 //Check if the user exists on royal by an http request directly to royal 
                 let user_data = await api_royal.WKGralInfo(id_owner);
 
+                console.log(user_data);
+
                 if(user_data.error == true){
                     return res.status(401).send({
                         message:user_data.message,
@@ -162,13 +167,13 @@ module.exports = {
                 }
 
             }
-        }).catch(err => {
+        })/*.catch(err => {
             res.status(401).json({ 
                 data: err,
                 message:"Error getting the gamer",
                 status: "error"
             })
-        });
+        });*/
 
         
 
@@ -182,7 +187,7 @@ module.exports = {
 
         //Getting user info
         let user_data = await api_royal.WKGralInfo(id_owner);
-        console.log(user_data);
+        console.log("*********************" + user_data.ownerDetail.ownerID);
         //Check if user exists in royal system 
         if(user_data.ownerDetail.ownerID !== undefined){
             //Get the user from DB
@@ -820,11 +825,10 @@ INFORMACION PARA GUARDAR WEB USER
             }
         }).then( user_skins => {
 
-            console.log("SKINS");
             console.log(user_skins);
 
             //Scenario where the user don't have the skin
-            if(user_skin.length() == 0){
+            if(user_skins.length == 0){
 
                 UserSkin.create(skin_info).then(unlocked_skin => {
                     return res.status(200).send({
@@ -978,7 +982,80 @@ INFORMACION PARA GUARDAR WEB USER
             });             
         }         
 
-    }          
+    },          
+
+    update_progress:(req,res)=>{
+        let {key, value}= req.body;
+        let user_info = req.decoded;
+
+	    Gamer.findOne({
+	        where: {
+                id:user_info.id
+	        }
+	    }).then(async gamer => {
+
+            let progress = gamer.saved_progress;
+
+            progress[key] = value;
+
+            Gamer.update({
+                    saved_progress: progress
+                },
+                {
+                    where:{
+                        id: user_info.id
+                    }
+                }
+            ).then(response => {
+    
+                return res.status(200).send({
+                    data: response,
+                    message:"Progress updated",
+                    status: "success"
+                });    
+    
+            }).catch(err => {
+                res.status(401).json({ 
+                    data: err,
+                    status: "error"
+                })
+            });            
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                message: "error getting user progress",
+                status: "error"
+            })            
+        })
+    },
+
+    get_gamer_progress:(req,res)=>{
+
+        let user_info = req.decoded;
+
+	    Gamer.findOne({
+	        where: {
+                id:user_info.id
+	        }
+	    }).then(async gamer => {
+
+            let progress = gamer.saved_progress;
+
+            return res.status(200).send({
+                data: progress,
+                message:"Progress request completed",
+                status: "success"
+            });    
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                message: "error getting user progress",
+                status: "error"
+            })            
+        });
+    }
 
 }
 

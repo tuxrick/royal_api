@@ -41,6 +41,13 @@ module.exports = (router) => {
 		.post(validateToken,gamer_controller.save_contact_item);
 		
 	router.route('/automized_payments_format')
-		.post(validateToken,gamer_controller.automized_payments_format);		
+		.post(validateToken,gamer_controller.automized_payments_format);
+		
+	router.route('/update_progress')
+		.post(validateToken,gamer_controller.update_progress);
+	
+	router.route('/get_gamer_progress')
+		.get(validateToken,gamer_controller.get_gamer_progress);				
+		
 	return router;    
 };  
