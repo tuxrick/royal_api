@@ -1055,7 +1055,41 @@ INFORMACION PARA GUARDAR WEB USER
                 status: "error"
             })            
         });
-    }
+    },
+    
+    get_last_connection: (req,res)=>{
+
+        let id_owner = req.body.id_owner;
+
+        let query = 'SELECT MAX(t1.id) as id, gamers.id_owner, t1.id_gamer, MAX(time) as latest ,MAX(t1.date) as last_date FROM sessions t1 inner join gamers on gamers.id = t1.id_gamer ';
+
+        if(
+            (id_owner != "")&&
+            (id_owner != null)&&
+            (id_owner != undefined)&&
+            (id_owner != "undefined")
+        ){
+            query += " AND gamers.id_owner = "+ id_owner ;
+        }
+
+        query += " GROUP BY id_gamer";
+
+        db.sequelize.query(query)
+        .then(result => {
+            res.status(200).json({ 
+                data: result[0],
+                status: "success"
+            });					
+        }).catch(err => {
+            res.status(200).json({ 
+                data: err,
+                status: "error"
+            });
+        })
+
+    },
+
+
 
 }
 
