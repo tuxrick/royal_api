@@ -57,15 +57,15 @@ module.exports = {
                     }
 
                     let compiled_rewards = {
-                        total_nights:0,
-                        total_upgrades:0,
-                        total_rewards:0,
-                        used_upgrades:0, 
-                        used_nights:0, 
-                        used_rewards:0
+                        total_nights: prizes_data[0].nightsWon,
+                        total_upgrades: prizes_data[0].upgradesWon,
+                        total_rewards: prizes_data[0].rewardsWon,
+                        used_upgrades: prizes_data[0].upgradesUSed,
+                        used_nights: prizes_data[0].nightsUsed,
+                        used_rewards: prizes_data[0].rewardsUsed
                     }
                     
-                    
+                    /*
                     for(let i=0; i<prizes_data.length; i++){
                         compiled_rewards.total_nights += prizes_data[i].nights;
                         compiled_rewards.total_upgrades += prizes_data[i].unitUpgrade;
@@ -78,6 +78,7 @@ module.exports = {
                             }
                         }
                     }
+                    */
 
                     return res.status(200).send({
                         data: {
@@ -126,15 +127,15 @@ module.exports = {
                     }
 
                     let compiled_rewards = {
-                        total_nights:0,
-                        total_upgrades:0,
-                        total_rewards:0,
-                        used_upgrades:0, 
-                        used_nights:0, 
-                        used_rewards:0
+                        total_nights: prizes_data[0].nightsWon,
+                        total_upgrades: prizes_data[0].upgradesWon,
+                        total_rewards: prizes_data[0].rewardsWon,
+                        used_upgrades: prizes_data[0].upgradesUSed,
+                        used_nights: prizes_data[0].nightsUsed,
+                        used_rewards: prizes_data[0].rewardsUsed
                     }
                     
-                    
+                    /*
                     for(let i=0; i<prizes_data.length; i++){
                         compiled_rewards.total_nights += prizes_data[i].nights;
                         compiled_rewards.total_upgrades += prizes_data[i].unitUpgrade;
@@ -147,7 +148,8 @@ module.exports = {
                             }
                         }
                     }
-
+                    */
+                    
 
                     return res.status(200).send({
                         data: {
@@ -167,13 +169,13 @@ module.exports = {
                 }
 
             }
-        })/*.catch(err => {
+        }).catch(err => {
             res.status(401).json({ 
                 data: err,
                 message:"Error getting the gamer",
                 status: "error"
             })
-        });*/
+        });
 
         
 

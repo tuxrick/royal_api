@@ -920,7 +920,7 @@ module.exports = {
     let token = await this.login_royal();
     if(token.access_token){
       
-      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/getwonprizesbyowner?ownerId=' + owner_id,
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/WKGralInfo/prizesresume?ownerId=' + owner_id,
       {
         headers: {
           'Authorization': `Bearer ${token.access_token}`
@@ -934,7 +934,7 @@ module.exports = {
         return {
           error: true,
           detail: error,
-          message: "error connecting getwonprizesbyowner endpoint"
+          message: "error connecting prizesresume endpoint"
         }
       });    
     
