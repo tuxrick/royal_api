@@ -189,7 +189,7 @@ module.exports = {
 
         //Getting user info
         let user_data = await api_royal.WKGralInfo(id_owner);
-        console.log("*********************" + user_data.ownerDetail.ownerID);
+
         //Check if user exists in royal system 
         if(user_data.ownerDetail.ownerID !== undefined){
             //Get the user from DB
@@ -344,7 +344,6 @@ module.exports = {
 
                 //Validate expiration and code
                 let valid_date = isDateBeforeToday(new Date(gamer.expiration_time));                
-                console.log("date validation result" + valid_date);                
 
                 if((valid_date == false) && (gamer.code == code)){
 
