@@ -454,7 +454,8 @@ module.exports = db.sequelize.define(
         "PremioEuropa610":"",
         "PremioEuropa620":"",
         "PremioEuropa630":"",
-        "PremioEuropa640":""
+        "PremioEuropa640":"",
+        "ActualJourney":""
         }
     },            
   },
