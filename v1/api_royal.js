@@ -837,7 +837,7 @@ module.exports = {
 
       let axios_call = await axios.post(process.env.ROYAL_SERVER+'/Contacts/saveContact',
       {
-        "ContactTypeId":2,
+        "ContactTypeId":86,
         "OwnerId":owner_id,
         "ContractId":contract_id,
         "ContactNote":contact_info,
