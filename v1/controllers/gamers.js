@@ -171,13 +171,13 @@ module.exports = {
                 }
 
             }
-        })/*.catch(err => {
+        }).catch(err => {
             res.status(401).json({ 
                 data: err,
                 message:"Error getting the gamer",
                 status: "error"
             })
-        });*/
+        });
 
         
 
