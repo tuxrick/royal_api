@@ -106,7 +106,7 @@ module.exports = db.sequelize.define(
     },
     latestDate: {
     	type: Sequelize.DATE,
-      default: new Date()
+      defaultValue: new Date()
     },    
     saved_progress: {
     	type: Sequelize.JSON,

@@ -116,7 +116,7 @@ module.exports = {
                 if(user_data.ownerDetail.ownerID !== undefined){
 
                     user_data.answered_survey = false;
-                    user_data.latestDate = gamer.latestDate;
+                    user_data.latestDate = new Date();
 
                     let prizes_data = await api_royal.earned_prizes(id_owner);
                 
@@ -171,13 +171,13 @@ module.exports = {
                 }
 
             }
-        }).catch(err => {
+        })/*.catch(err => {
             res.status(401).json({ 
                 data: err,
                 message:"Error getting the gamer",
                 status: "error"
             })
-        });
+        });*/
 
         
 
