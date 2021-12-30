@@ -104,6 +104,10 @@ module.exports = db.sequelize.define(
     	type: Sequelize.BOOLEAN,
       defaultValue: false
     },
+    latestDate: {
+    	type: Sequelize.DATE,
+      default: new Date()
+    },    
     saved_progress: {
     	type: Sequelize.JSON,
       defaultValue: {
@@ -455,7 +459,8 @@ module.exports = db.sequelize.define(
         "PremioEuropa620":"",
         "PremioEuropa630":"",
         "PremioEuropa640":"",
-        "ActualJourney":""
+        "ActualJourney":0,
+        "latestDate":""
         }
     },            
   },
