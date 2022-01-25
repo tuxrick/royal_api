@@ -75,8 +75,22 @@ module.exports = {
             date: new Date()
         }
 
+        let dismiss = req.body.dismiss; 
+
+        if(
+            (dismiss != "")&&
+            (dismiss != null)&&
+            (dismiss != undefined)&&
+            (dismiss != "undefined")
+        ){
+            dismiss = dismiss;
+        }else{
+            dismiss = "";
+        }
+    
+
         //Http call to royal api to save prize 
-        let user_prize = await api_royal.registerprizes(gamer_info.id_owner, gamer_info.id_contract, id_prize);
+        let user_prize = await api_royal.registerprizes(gamer_info.id_owner, gamer_info.id_contract, id_prize, dismiss);
         //console.log(user_data);        
         
         if(user_prize.error == true){

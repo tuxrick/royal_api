@@ -366,26 +366,38 @@ module.exports = {
   },
 
   //Registra los premios del usuario
-  registerprizes: async function(owner_id, contract_id, reason_id){ 
+  registerprizes: async function(owner_id, contract_id, reason_id, Dismiss){ 
   
     /*
     //Parámetros
     {
       "OwnerId":12345,
       "ContractId":101217,
-      "ReasonId":4
+      "ReasonId":4,
+      "Dismiss": true/False
     }
     */
     let token = await this.login_royal();
     //console.log(process.env.ROYAL_SERVER);
     if(token.access_token){
-      
-      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/WKGralInfo/registerprizes',
-      {
+
+      let data_uploaded ={
         "OwnerId":owner_id,
         "ContractId":contract_id,
         "ReasonId":reason_id
-      },
+      };
+
+      if(
+        (data_uploaded.Dismiss != "")&&
+        (data_uploaded.Dismiss != null)&&
+        (data_uploaded.Dismiss != undefined)&&
+        (data_uploaded.Dismiss != "undefined")
+      ){
+        data_uploaded.Dismiss = Dismiss;
+      }
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/WKGralInfo/registerprizes',
+      data_uploaded,
       {
         headers: {
           'Authorization': `Bearer ${token.access_token}`
