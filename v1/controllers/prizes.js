@@ -85,7 +85,7 @@ module.exports = {
         ){
             dismiss = dismiss;
         }else{
-            dismiss = "";
+            dismiss = 0;
         }
     
 
