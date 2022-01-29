@@ -179,9 +179,6 @@ module.exports = {
             })
         });
 
-        
-
-
     },
     
     //Send confitmation code

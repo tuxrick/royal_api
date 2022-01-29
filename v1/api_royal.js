@@ -397,7 +397,7 @@ module.exports = {
       }else{
         data_uploaded.Dismiss = Dismiss;
       }
-      
+
       let axios_call = await axios.post(process.env.ROYAL_SERVER+'/WKGralInfo/registerprizes',
       data_uploaded,
       {
