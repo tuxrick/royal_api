@@ -1092,7 +1092,7 @@ INFORMACION PARA GUARDAR WEB USER
     update_languaje: (req,res)=>{
 
         let languaje = req.body.languaje;
-        let user_info = req.decoded;
+        let user_info = req.body.id_owner;
 
         Gamer.update(
             {
