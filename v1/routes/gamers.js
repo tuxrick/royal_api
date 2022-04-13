@@ -55,5 +55,8 @@ module.exports = (router) => {
 	router.route('/get_last_connection')
 		.post(gamer_controller.get_last_connection);
 
+	router.route('/update_languaje')
+		.post(validateToken,gamer_controller.update_languaje);		
+
 	return router;    
 };  

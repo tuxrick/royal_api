@@ -462,7 +462,12 @@ module.exports = db.sequelize.define(
         "ActualJourney":0,
         "latestDate":""
         }
-    },            
+    },          
+    languaje: {
+    	type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'ING'
+    }      
   },
   {
     timestamps: false,

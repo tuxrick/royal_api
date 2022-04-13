@@ -1089,6 +1089,37 @@ INFORMACION PARA GUARDAR WEB USER
 
     },
 
+    update_languaje: (req,res)=>{
+
+        let languaje = req.body.languaje;
+        let user_info = req.decoded;
+
+        Gamer.update(
+            {
+                languaje:languaje
+            },
+            {
+                where:{
+                    id_owner: user_info.id_owner
+                }
+            }
+        ).then(response => {
+
+            return res.status(200).send({
+                data: response,
+                message:"Gamer languaje updated",
+                status: "success"
+            });    
+
+        }).catch(err => {
+            res.status(401).json({ 
+                data: err,
+                status: "error"
+            })
+        })
+
+    }
+
 
 
 }
