@@ -1092,7 +1092,7 @@ INFORMACION PARA GUARDAR WEB USER
     update_languaje: (req,res)=>{
 
         let languaje = req.body.languaje;
-        let user_info = req.body.id_owner;
+        let id_owner = req.body.id_owner;
 
         Gamer.update(
             {
@@ -1100,7 +1100,7 @@ INFORMACION PARA GUARDAR WEB USER
             },
             {
                 where:{
-                    id_owner: user_info.id_owner
+                    id_owner: id_owner
                 }
             }
         ).then(response => {
