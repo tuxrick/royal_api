@@ -45,6 +45,8 @@ module.exports = {
                 user_data.answered_survey = gamer.answered_survey;
                 user_data.latestDate = gamer.latestDate;
 
+                user_data.languaje = gamer.languaje;
+
                 if(user_data.ownerDetail.ownerID !== undefined){
 
                     let prizes_data = await api_royal.earned_prizes(id_owner);
