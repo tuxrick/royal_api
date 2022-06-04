@@ -525,156 +525,7 @@ module.exports = {
 
     return axios_call;
   },
-
-
-  //Service Centers List
-  servicecenters: async function(id_owner) {
-    
-    /*
-    let token = await this.login_royal().access_token;
-    
-    const royal_data = {
-      server: process.env.ROYAL_SERVER
-    }
-
-    let axios_call =  axios.get(royal_data.server+'/servicecenters', {
-
-    })
-    .then(async (response) => {
-      //console.log(response);
-      return response.data;
-    }).catch((error) => {
-      //console.log(error);
-      return error;
-    });    
-
-    return axios_call; 
-    */
-
-    let response = {
-      data:[
-        {
-            "cLookupID": 575,
-            "cLookupParentID": 98,
-            "lookupName": "Servicio Norteamerica",
-            "description": "SA"
-        },
-        {
-          "cLookupID": 575,
-          "cLookupParentID": 98,
-          "lookupName": "Servicio Norteamerica",
-          "description": "SA"
-        }        
-      ]
-    };
-
-    return response.data;
-
-  },
-  //Listado de las etapas del juego donde se pueden ganar premios.
-  reasons2win: async function(id_owner) {  
-
-    let response = {
-      data:[
-        {
-          "updateDate": null,
-          "reasonId": 1,
-          "reasonDescription": "IDP Con CDP",
-          "createDate": "2021-01-12T00:06:38.043",
-          "createdBy": "mlopezc",
-          "updatedBy": "mlopezc",
-          "active": 1
-        },
-        {
-          "updateDate": null,
-          "reasonId": 1,
-          "reasonDescription": "IDP Con CDP",
-          "createDate": "2021-01-12T00:06:38.043",
-          "createdBy": "mlopezc",
-          "updatedBy": "mlopezc",
-          "active": 1
-        },        
-  
-      ]
-    };
-    return response.data;
-  },
-  //Lista los niveles de membresía
-  membershiplevels: async function(id_owner) {  
-
-    let response = {
-      data:[
-        {
-          "clubPkgTypeID": 230,
-          "clubID": 8,
-          "pkgType": "Imagine",
-          "pointAmount": 9.00
-        },
-        {
-          "clubPkgTypeID": 230,
-          "clubID": 8,
-          "pkgType": "Imagine",
-          "pointAmount": 9.00
-        },
-  
-      ]
-    };
-    return response.data;
-  },  
-  //Tipos de Venta de contratos.
-  salestype: async function(id_owner) {  
-
-    let response = {
-      data:[
-        {
-          "cLookupID": 1559,
-          "cLookupParentID": 21,
-          "lookupName": "Upgrade",
-          "description": "Upgrade"
-        },
-        {
-          "cLookupID": 1561,
-          "cLookupParentID": 21,
-          "lookupName": "Original",
-          "description": "Original"
-        }  
-      ]
-    };
-    return response.data;
-  }, 
-  //Listado de oficinas o sites
-  sitelist: async function(id_owner) {  
-
-    let response = {
-      data:[
-        {
-          "siteID": 290,
-          "siteName": "D-Club Cala Migracion",
-          "regionID": 29,
-          "region": "Puerto Rico",
-          "areaID": null,
-          "area": "",
-          "siteType": "Sales Room",
-          "siteTypeID": 720,
-          "siteStatus": "Active",
-          "siteStatusID": 730
-        },
-        {
-          "siteID": 290,
-          "siteName": "D-Club Cala Migracion",
-          "regionID": 29,
-          "region": "Puerto Rico",
-          "areaID": null,
-          "area": "",
-          "siteType": "Sales Room",
-          "siteTypeID": 720,
-          "siteStatus": "Active",
-          "siteStatusID": 730
-        }  
-      ]
-    };
-    return response.data;
-  },    
+      
   //Lista los certificados de tipo Welcome Kit
   certificateswklist: async function(id_owner) {  
 
@@ -702,41 +553,7 @@ module.exports = {
     };
     return response.data;
   },      
-  //Listado de ejecutivos
-  stewards: async function(id_owner) {  
-
-    let response = {
-      data:[
-        {
-          "personnelId": 17802,
-          "userName": "akleiner",
-          "firstName": "Adriana Paola",
-          "lastName": "Kleiner",
-          "departmentId": 0,
-          "department": "",
-          "titleId": 92,
-          "personnelstatus": "Employed",
-          "personnelstatusId": 379,
-          "title": "Ejecutivo CC",
-          "email": "akleiner@royal-holiday.net"
-        },
-        {
-          "personnelId": 17802,
-          "userName": "akleiner",
-          "firstName": "Adriana Paola",
-          "lastName": "Kleiner",
-          "departmentId": 0,
-          "department": "",
-          "titleId": 92,
-          "personnelstatus": "Employed",
-          "personnelstatusId": 379,
-          "title": "Ejecutivo CC",
-          "email": "akleiner@royal-holiday.net"
-        }
-      ]
-    };
-    return response.data;
-  },
+  
   //Catálogo de las encuestas disponibles
   surveycatalog: async function(){  
 
@@ -784,6 +601,7 @@ module.exports = {
     };
     return response.data;
   },
+
   //Indica si la encuesta ha sido respondida en su totalidad
   issurveyanswered: async function(ownerId,surveyId){  
     /*
@@ -800,6 +618,7 @@ module.exports = {
     };
     return response.data;
   },
+
   //Manda mail de campaña
   sendcampaignmail: async function (campaign, data){
 
@@ -961,7 +780,377 @@ module.exports = {
       }
     }
       
-  },  
+  },
+
+  //Service Centers List
+  servicecenters: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    console.log(token);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/servicecenters',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/servicecenters endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  }, 
+
+  sitelist: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/sitelist',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/sitelist endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  membershiplevels: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/membershiplevels',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/membershiplevels endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  salestype: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/salestype',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/salestype endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  stewards: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/stewards',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/stewards endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  reasons2win: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Catalogs/reasons2win',
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Catalogs/reasons2win endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  Maindashboard: async function() {
+    
+    let token = await this.login_royal();
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.post(process.env.ROYAL_SERVER+'/Dashboard/Maindashboard',
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Dashboard/Maindashboard endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  dashboardgeneralinfo: async function(params) {
+    
+    let token = await this.login_royal();
+
+    let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+    for(let i=0; i<params.siteList.length; i++){
+      complements += "&siteList="+params.siteList[i];
+    }
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Dashboard/dashboardgeneralinfo?'+ complements,
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Dashboard/dashboardgeneralinfo endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  dashboardsalesinfo: async function(params) {
+    
+    let token = await this.login_royal();
+
+    let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+    for(let i=0; i<params.siteList.length; i++){
+      complements += "&siteList="+params.siteList[i];
+    }
+
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Dashboard/dashboardsalesinfo?'+complements,
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Dashboard/dashboardsalesinfo endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
+
+  PrizesWonPerSite: async function(params) {
+    
+    let token = await this.login_royal();
+
+    let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+    for(let i=0; i<params.siteList.length; i++){
+      complements += "&siteList="+params.siteList[i];
+    }
+
+    //console.log(process.env.ROYAL_SERVER);
+    if(token.access_token){
+      
+      let axios_call = await axios.get(process.env.ROYAL_SERVER+'/Dashboard/PrizesWonPerSite?'+complements,
+      {
+        headers: {
+          'Authorization': `Bearer ${token.access_token}`
+        }
+      })
+      .then(async (response) => {
+        //console.log(response);
+        return response.data;
+      }).catch((error) => {
+        //console.log(error);
+        return {
+          error: true,
+          detail: error,
+          message: "error connecting Dashboard/PrizesWonPerSite endpoint"
+        }
+      });    
+    
+      return axios_call; 
+
+    }else{
+      return {
+        error: true,
+        message: "error connecting to royal systems"
+      }
+    }
+
+  },
 
 }  
 

@@ -33,6 +33,9 @@ app.use('/api/v1/sessions', sessions(router));
 let prizes = require('./v1/routes/prizes.js');
 app.use('/api/v1/prizes', prizes(router));
 
+let dashboard = require('./v1/routes/dashboard.js');
+app.use('/api/v1/dashboard', dashboard(router));
+
 
 app.listen(3000, () => {
 	console.log("server running in port 3000");
