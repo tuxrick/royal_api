@@ -1035,6 +1035,7 @@ module.exports = {
     let token = await this.login_royal();
 
     let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+
     for(let i=0; i<params.siteList.length; i++){
       complements += "&siteList="+params.siteList[i];
     }
@@ -1075,9 +1076,13 @@ module.exports = {
     let token = await this.login_royal();
 
     let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+    
+    params.siteList = JSON.parse(params.siteList);
+
     for(let i=0; i<params.siteList.length; i++){
       complements += "&siteList="+params.siteList[i];
     }
+    
 
     //console.log(process.env.ROYAL_SERVER);
     if(token.access_token){
