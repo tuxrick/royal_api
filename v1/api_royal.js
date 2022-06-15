@@ -994,14 +994,99 @@ module.exports = {
 
   },
 
-  Maindashboard: async function() {
+  Maindashboard: async function(params) {
     
     let token = await this.login_royal();
-    //console.log(process.env.ROYAL_SERVER);
+
+    let post_data = {
+        "ServiceCenterId":[0],
+        "OwnerId":0,
+        "InitDate":params.initDate,
+        "OutDate":params.endDate,
+        "SiteId":[0],
+        "Steward":[""],
+        "WonNights":0,
+        "MemberhipLevelId":[0],
+        "SaleTypeId":[0],
+        "MonthId":0,
+        "RedeemNights":0,
+        "ReasonToWinNights":[0],
+        "WonRewards":0,
+        "ReasonToWinRewards":[0],
+        "WonUpgrades":0,
+        "ReasonToWinUpgrades":[0],
+        "Year":0,
+        "SiteIdRedeemNights":[0],
+        "RedeemRewards":0,
+        "SiteIdRedeemRewards":[0],
+        "RedeemUpgrades":0,
+        "SiteIdRedeemUpgrades":[0],
+        "ReservationDate":"",
+        "ReservationCheckIn":""        
+    }
+    
+    post_data.ServiceCenterId = JSON.parse(params.ServiceCenterId);
+    post_data.SiteId = JSON.parse(params.siteList);
+
+    if(params.OwnerId){
+      post_data.OwnerId = params.OwnerId;      
+    }
+    if(params.Steward){
+      post_data.Steward = JSON.parse(params.Steward);
+    }    
+    if(params.WonNights){
+      post_data.WonNights = params.WonNights;      
+    }    
+    if(params.MemberhipLevelId){
+      post_data.MemberhipLevelId = JSON.parse(params.MemberhipLevelId);
+    }        
+    if(params.SaleTypeId){
+      post_data.SaleTypeId = JSON.parse(params.SaleTypeId);
+    }            
+    if(params.MonthId){
+      post_data.MonthId = params.MonthId;      
+    }       
+    if(params.RedeemNights){
+      post_data.RedeemNights = params.RedeemNights;      
+    }  
+    if(params.ReasonToWinNights){
+      post_data.ReasonToWinNights = JSON.parse(params.ReasonToWinNights);
+    }      
+    if(params.WonUpgrades){
+      post_data.WonUpgrades = params.WonUpgrades;
+    }      
+    if(params.ReasonToWinUpgrades){
+      post_data.ReasonToWinUpgrades = JSON.parse(params.ReasonToWinUpgrades);
+    }
+    if(params.Year){
+      post_data.Year = params.Year;
+    }
+    if(params.SiteIdRedeemNights){
+      post_data.SiteIdRedeemNights = JSON.parse(params.SiteIdRedeemNights);
+    }    
+    if(params.RedeemRewards){
+      post_data.RedeemRewards = params.RedeemRewards;
+    }
+    if(params.SiteIdRedeemRewards){
+      post_data.SiteIdRedeemRewards = JSON.parse(params.SiteIdRedeemRewards);
+    }      
+    if(params.RedeemUpgrades){
+      post_data.RedeemUpgrades = params.RedeemUpgrades;
+    }
+    if(params.SiteIdRedeemUpgrades){
+      post_data.SiteIdRedeemUpgrades = JSON.parse(params.SiteIdRedeemUpgrades);
+    }         
+    if(params.ReservationDate){
+      post_data.ReservationDate = params.ReservationDate;
+    }         
+    if(params.ReservationCheckIn){
+      post_data.ReservationCheckIn = params.ReservationCheckIn;
+    }         
+
     if(token.access_token){
       
       let axios_call = await axios.post(process.env.ROYAL_SERVER+'/Dashboard/Maindashboard',
-      {},
+      post_data,
       {
         headers: {
           'Authorization': `Bearer ${token.access_token}`
@@ -1011,7 +1096,7 @@ module.exports = {
         //console.log(response);
         return response.data;
       }).catch((error) => {
-        //console.log(error);
+        console.log(error);
         return {
           error: true,
           detail: error,
@@ -1036,8 +1121,10 @@ module.exports = {
 
     let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
 
+    params.siteList = JSON.parse(params.siteList);
+
     for(let i=0; i<params.siteList.length; i++){
-      complements += "&siteList="+params.siteList[i];
+      complements += "&siteId="+params.siteList[i];
     }
     //console.log(process.env.ROYAL_SERVER);
     if(token.access_token){
@@ -1121,6 +1208,8 @@ module.exports = {
     let token = await this.login_royal();
 
     let complements = "initDate="+params.initDate+"&endDate="+params.endDate; 
+    params.siteList = JSON.parse(params.siteList);
+
     for(let i=0; i<params.siteList.length; i++){
       complements += "&siteList="+params.siteList[i];
     }
@@ -1138,7 +1227,7 @@ module.exports = {
         //console.log(response);
         return response.data;
       }).catch((error) => {
-        //console.log(error);
+        console.log(error);
         return {
           error: true,
           detail: error,
