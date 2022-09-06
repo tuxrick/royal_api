@@ -11,6 +11,7 @@ const Gamer = require('../../v1/models/gamers');
 const User = require('../../v1/models/users');
 const UserSkin = require('../../v1/models/user_skins');
 
+
 module.exports = {
 
     info: async (req, res) => {
@@ -357,7 +358,8 @@ module.exports = {
                         email:gamer.email,
                         first_name:gamer.first_name,
                         last_name:gamer.last_name, 
-                        id_contract: gamer.id_contract
+                        id_contract: gamer.id_contract,
+                        languaje: gamer.languaje
                     }, 
                     process.env.SECRET_KEY, {
                         expiresIn: '360d'
@@ -731,9 +733,12 @@ INFORMACION PARA GUARDAR WEB USER
     },
     //Send email to user 
     send_campaign_mail: async (req, res) => {
+        
         let campaign = req.params.campaign;
         const user_info = req.decoded;
-        
+        let languaje = user_info.languaje; 
+
+
         let data = {
             "email": user_info.email,
             "data": {
@@ -767,6 +772,157 @@ INFORMACION PARA GUARDAR WEB USER
                 }
             };            
         }
+
+
+        //If languaje is spanish, then we send the campaign in spanish
+        switch(campaign) {
+            case 3085447:
+              campaign = 3683660;
+              break;
+            case 3097135:
+              campaign = 3688066;
+              break;
+            case 3097169:
+              campaign = 3688406;
+              break; 
+            case 3097232:
+              campaign = 3688438;
+              break;
+            case 3097240:
+              campaign = 3688717;
+              break;
+            case 3097234:
+              campaign = 3701454;
+              break;               
+            case 3097260:
+              campaign = 3689940;
+              break;
+            case 3097235:
+              campaign = 3689964;
+              break;
+            case 3097261:
+              campaign = 3690159;
+              break; 
+            case 3097267:
+              campaign = 3690266;
+              break;
+            case 3097270:
+              campaign = 3690445;
+              break;
+            case 3087847:
+              campaign = 3690164;
+              break; 
+            case 3097263:
+              campaign = 3692087;
+              break;
+            case 3097271:
+              campaign = 3690447;
+              break;
+            case 3097280:
+              campaign = 3692146;
+              break; 
+            case 3097244:
+              campaign = 3688724;
+              break;
+            case 3097409:
+              campaign = 3692360;
+              break;
+            case 3097287:
+              campaign = 3692403;
+              break; 
+            case 3097413:
+              campaign = 3692466;
+              break;
+            case 3097290:
+              campaign = 3692474;
+              break;
+            case 3097402:
+              campaign = 3692477;
+              break; 
+            case 3218472:
+              campaign = 3701482;
+              break;
+            case 3097242:
+              campaign = 3701483;
+              break;
+            case 3097262:
+              campaign = 3701486;
+              break;               
+            case 3097268:
+              campaign = 3701488;
+              break;
+            case 3097272:
+              campaign = 3701517;
+              break;
+            case 3097264:
+              campaign = 3701600;
+              break; 
+            case 3097272:
+              campaign = 3701517;
+              break;
+            case 3097282:
+              campaign = 3701603;
+              break;
+            case 3097245:
+              campaign = 3701484;
+              break; 
+            case 3097289:
+              campaign = 3701606;
+              break;
+            case 3097406:
+              campaign = 3692485;
+              break;
+            case 3097411:
+              campaign = 3692510;
+              break; 
+            case 3097288:
+              campaign = 3692507;
+              break;
+            case 3097246:
+              campaign = 3701485;
+              break;
+
+            case 3097269:
+              campaign = 3701489;
+              break;               
+            case 3097265:
+                campaign = 3701601;
+            break;
+            case 3097286:
+                campaign = 3701487;
+            break;
+            case 3097273:
+                campaign = 3701542;
+            break;
+            case 3097283:
+                campaign = 3701604;
+            break;                                                            
+            case 3218308:
+                campaign = 3692516;
+            break;
+            case 3214623:
+                campaign = 3701610;
+            break;
+            case 3216518:
+                campaign = 3692522;
+            break;
+            case 3214730:
+                campaign = 3692527;
+            break;                                                            
+            
+            case 3216692:
+                campaign = 3701609;
+            break;
+            case 3218351:
+                campaign = 3692532;
+            break;
+            case 3218380:
+                campaign = 3692556;
+            break;
+        }
+                  
+
+
 
         let sendcodemail = await api_royal.sendcampaignmail(campaign, data);
 
