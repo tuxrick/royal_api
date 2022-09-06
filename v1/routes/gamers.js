@@ -56,7 +56,7 @@ module.exports = (router) => {
 		.post(gamer_controller.get_last_connection);
 
 	router.route('/update_languaje')
-		.post(gamer_controller.update_languaje);		
+		.post(validateToken, gamer_controller.update_languaje);		
 
 	return router;    
 };  

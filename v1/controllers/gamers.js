@@ -985,6 +985,16 @@ INFORMACION PARA GUARDAR WEB USER
 
             console.log(user_skins);
 
+            for(let i=0; i<user_skins.length; i++){
+                if(user_skins[i].id_skin == id_skin){
+                    return res.status(200).send({
+                        data: user_skins,
+                        message:"Skin already unlocked",
+                        status: "success"
+                    });  
+                }
+            }
+
             //Scenario where the user don't have the skin
             if(user_skins.length == 0){
 
@@ -1252,6 +1262,22 @@ INFORMACION PARA GUARDAR WEB USER
         let languaje = req.body.languaje;
         let id_owner = req.body.id_owner;
 
+        let user_info = req.decoded;
+
+        let token = jwt.sign({
+            id:user_info.id, 
+            id_owner:user_info.id_owner, 
+            email:user_info.email,
+            first_name:user_info.first_name,
+            last_name:user_info.last_name, 
+            id_contract: user_info.id_contract,
+            languaje: languaje
+        }, 
+        process.env.SECRET_KEY, {
+            expiresIn: '360d'
+        });
+
+
         Gamer.update(
             {
                 languaje:languaje
@@ -1264,7 +1290,9 @@ INFORMACION PARA GUARDAR WEB USER
         ).then(response => {
 
             return res.status(200).send({
-                data: response,
+                data: {
+                    token:token
+                },
                 message:"Gamer languaje updated",
                 status: "success"
             });    
