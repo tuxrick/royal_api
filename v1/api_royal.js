@@ -999,34 +999,51 @@ module.exports = {
     let token = await this.login_royal();
 
     let post_data = {
-        "ServiceCenterId":[0],
-        "OwnerId":0,
-        "InitDate":params.initDate,
-        "OutDate":params.endDate,
-        "SiteId":[0],
-        "Steward":[""],
-        "WonNights":0,
-        "MemberhipLevelId":[0],
-        "SaleTypeId":[0],
-        "MonthId":0,
-        "RedeemNights":0,
-        "ReasonToWinNights":[0],
-        "WonRewards":0,
-        "ReasonToWinRewards":[0],
-        "WonUpgrades":0,
-        "ReasonToWinUpgrades":[0],
-        "Year":0,
-        "SiteIdRedeemNights":[0],
-        "RedeemRewards":0,
-        "SiteIdRedeemRewards":[0],
-        "RedeemUpgrades":0,
-        "SiteIdRedeemUpgrades":[0],
-        "ReservationDate":"",
-        "ReservationCheckIn":""        
+      "OwnerId":0,
+      "InitDate":params.initDate,
+      "OutDate":params.endDate,
+      "FromDate":"",
+      "ToDate":"",
+      "ServiceCenterId":[0],
+      "SiteId":[],
+      "MemberhipLevelId":[],
+      "SaleTypeId":[],
+      "Steward":[],
+      "WonNights":0,
+      "ReasonToWinNights":[],
+      "WonRewards_From":0,
+      "WonRewards_To":0,
+      "ReasonToWinRewards":[],
+      "WonUpgrades":0,
+      "ReasonToWinUpgrades":[],
+      "MonthSale":0,
+      "YearSale":0,
+      "RedeemNights":0,
+      "SiteIdRedeemNights":[],
+      "RedeemRewards":0,
+      "SiteIdRedeemRewards":[],
+      "RedeemUpgrades":0,
+      "SiteIdRedeemUpgrades":[],
+      "ReservationDate_From":"",
+      "ReservationDate_To":"",
+      "ReservationCheckIn_From":"",
+      "ReservationCheckIn_To":"",
+      "MonthId3":0,
+      "Year3":0,
+      "YearResv":0,
+      "MonthResv":0        
     }
     
     post_data.ServiceCenterId = JSON.parse(params.ServiceCenterId);
     post_data.SiteId = JSON.parse(params.siteList);
+
+    if(params.InitDate){
+      post_data.WonNights = params.InitDate;      
+    }    
+
+    if(params.OutDate){
+      post_data.WonNights = params.OutDate;      
+    }        
 
     if(params.OwnerId){
       post_data.OwnerId = params.OwnerId;      
@@ -1046,6 +1063,9 @@ module.exports = {
     if(params.MonthId){
       post_data.MonthId = params.MonthId;      
     }       
+    if(params.Year){
+      post_data.Year = params.Year;
+    }
     if(params.RedeemNights){
       post_data.RedeemNights = params.RedeemNights;      
     }  
@@ -1058,9 +1078,7 @@ module.exports = {
     if(params.ReasonToWinUpgrades){
       post_data.ReasonToWinUpgrades = JSON.parse(params.ReasonToWinUpgrades);
     }
-    if(params.Year){
-      post_data.Year = params.Year;
-    }
+
     if(params.SiteIdRedeemNights){
       post_data.SiteIdRedeemNights = JSON.parse(params.SiteIdRedeemNights);
     }    
@@ -1076,12 +1094,18 @@ module.exports = {
     if(params.SiteIdRedeemUpgrades){
       post_data.SiteIdRedeemUpgrades = JSON.parse(params.SiteIdRedeemUpgrades);
     }         
-    if(params.ReservationDate){
-      post_data.ReservationDate = params.ReservationDate;
+    if(params.ReservationDate_From){
+      post_data.ReservationDate = params.ReservationDate_From;
     }         
-    if(params.ReservationCheckIn){
-      post_data.ReservationCheckIn = params.ReservationCheckIn;
+    if(params.ReservationDate_To){
+      post_data.ReservationDate = params.ReservationDate_To;
+    }             
+    if(params.ReservationCheckIn_From){
+      post_data.ReservationCheckIn = params.ReservationCheckIn_From;
     }         
+    if(params.ReservationCheckIn_To){
+      post_data.ReservationCheckIn = params.ReservationCheckIn_To;
+    }             
 
     if(token.access_token){
       

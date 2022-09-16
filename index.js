@@ -5,11 +5,21 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 var cors = require('cors');
+const cors_option = {
+	origin: true,
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	credentials: true,
+	exposedHeaders: ["x-auth-token"]
+};
+
 
 const app = express();
 const router = express.Router();
 
+
+
 //Middlewares
+app.use(cors(cors_option));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
