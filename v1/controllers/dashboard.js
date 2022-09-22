@@ -1,5 +1,9 @@
 //Api royal util
 const api_royal = require('../../v1/api_royal.js');
+//Models
+//const gamer = require('../../v1/models/gamer.js');
+const db = require('../../database/db.js');
+
 
 module.exports = {
     servicecenters: async (req, res) => {
@@ -206,4 +210,14 @@ module.exports = {
         });
 
     },
+
+    gameData: async (req, res) => {
+        let game_data = await db.sequelize.query("SELECT id, id_owner, (SELECT count(*) FROM time_played WHERE time_played.id_gamer = id) AS intermitencies, (SELECT time_played.time_played FROM time_played WHERE time_played.id_gamer = id) AS last_connection_time, (SELECT SEC_TO_TIME( SUM(time_to_sec(time_played))) FROM time_played WHERE time_played.id_gamer = id) AS total_time_played, (SELECT sessions.date FROM sessions WHERE sessions.id_gamer = id ORDER BY id DESC LIMIT 1) AS last_session, ownerstatus, (SELECT JSON_EXTRACT(saved_progress, '$.Ha'))AS Ha, (SELECT JSON_EXTRACT(saved_progress, '$.We'))AS We, (SELECT JSON_EXTRACT(saved_progress, '$.Ea'))AS Ea, (SELECT JSON_EXTRACT(saved_progress, '$.Me'))AS Me, (SELECT JSON_EXTRACT(saved_progress, '$.Ca'))AS Ca, (SELECT JSON_EXTRACT(saved_progress, '$.Su'))AS Su, (SELECT JSON_EXTRACT(saved_progress, '$.Eu'))AS Eu, (SELECT count(*) FROM prizes) AS total_prizes, (SELECT DISTINCT COUNT(*) FROM user_prizes WHERE user_prizes.id_gamer = id) AS user_prizes FROM gamers");
+
+        return res.status(200).send({
+            message:"successfull request",
+            data:game_data[0],
+            status: "success"  
+        });
+    }
 }

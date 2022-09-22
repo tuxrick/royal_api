@@ -33,6 +33,9 @@ module.exports = (router) => {
     router.route('/PrizesWonPerSite')
 		.post(controller.PrizesWonPerSite);  
 
+    router.route('/GameData')
+		.get(controller.gameData);      
+
 
 return router;    
 
